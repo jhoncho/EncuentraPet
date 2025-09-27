@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Mascota - EncuentraPet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .pet-current-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .pet-current-info h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .current-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #dee2e6;
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .form-tab.active {
+            color: #4ecdc4;
+        }
+
+        .form-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #4ecdc4;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .photo-upload {
+            border: 2px dashed #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload:hover {
+            border-color: #4ecdc4;
+            background: #f8f9fa;
+        }
+
+        .photo-upload input[type="file"] {
+            display: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #4ecdc4;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4ecdc4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Editar Información de Mascota</h1>
+            <p>Actualiza los datos de <span id="petName"></span></p>
+        </div>
+
+        <div class="content">
+            <!-- Back to Dashboard -->
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="/dashboard" style="color: #6c757d; text-decoration: none; font-size: 14px;">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+
+            <!-- Alerts -->
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-error" id="errorAlert"></div>
+
+            <!-- Current Pet Info -->
+            <div class="pet-current-info">
+                <h3>Información Actual</h3>
+                <img id="currentPhoto" class="current-photo" src="" alt="Foto actual" style="display:none;">
+                <p><strong>Código:</strong> <span id="currentCode"></span></p>
+                <p><strong>Registrada:</strong> <span id="registrationDate"></span></p>
+            </div>
+
+            <!-- Form Tabs -->
+            <div class="form-tabs">
+                <button class="form-tab active" onclick="showTab('basic')">
+                    Información Básica
+                </button>
+                <button class="form-tab" onclick="showTab('medical')">
+                    Información Médica
+                </button>
+                <button class="form-tab" onclick="showTab('contact')">
+                    Contacto de Emergencia
+                </button>
+            </div>
+
+            <form id="editPetForm">
+                <input type="hidden" id="petId" name="petId">
+
+                <!-- Tab 1: Información Básica -->
+                <div class="form-section active" id="basic-section">
+                    <h2>📝 Información Básica</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Nombre de tu mascota</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="species">Especie</label>
+                            <select id="species" name="species" required>
+                                <option value="">Selecciona</option>
+                                <option value="Perro">🐕 Perro</option>
+                                <option value="Gato">🐈 Gato</option>
+                                <option value="Conejo">🐰 Conejo</option>
+                                <option value="Ave">🦜 Ave</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="breed">Raza</label>
+                            <input type="text" id="breed" name="breed">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sex">Sexo</label>
+                            <select id="sex" name="sex" required>
+                                <option value="">Selecciona</option>
+                                <option value="Macho">♂️ Macho</option>
+                                <option value="Hembra">♀️ Hembra</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color/Marcas</label>
+                            <input type="text" id="color" name="color" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_years">Edad (Años)</label>
+                            <input type="number" id="age_years" name="age_years" min="0" max="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="age_months">Edad (Meses)</label>
+                            <input type="number" id="age_months" name="age_months" min="0" max="11">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Peso (kg)</label>
+                        <input type="number" id="weight" name="weight" step="0.1" min="0">
+                    </div>
+
+                    <!-- Photo Upload -->
+                    <div class="form-group">
+                        <label>Cambiar foto</label>
+                        <div class="photo-upload" onclick="document.getElementById('photo').click()">
+                            <input type="file" id="photo" name="photo" accept="image/*" onchange="previewPhoto(event)">
+                            <div>📷</div>
+                            <p>Click para cambiar foto</p>
+                            <small>JPG, PNG o GIF - Máx 5MB</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Información Médica -->
+                <div class="form-section" id="medical-section">
+                    <h2>🏥 Información Médica</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="microchip_code">Código de Microchip</label>
+                            <input type="text" id="microchip_code" name="microchip_code">
+                        </div>
+                        <div class="form-group">
+                            <label for="health_card_number">N° Carnet Sanitario</label>
+                            <input type="text" id="health_card_number" name="health_card_number">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="sterilized" name="sterilized">
+                        <label for="sterilized">Está esterilizado/castrado</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="blood_type">Tipo de Sangre</label>
+                        <input type="text" id="blood_type" name="blood_type">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="allergies">Alergias</label>
+                        <textarea id="allergies" name="allergies"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medical_conditions">Condiciones Médicas</label>
+                        <textarea id="medical_conditions" name="medical_conditions"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medications">Medicamentos Actuales</label>
+                        <textarea id="medications" name="medications"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="special_care">Cuidados Especiales</label>
+                        <textarea id="special_care" name="special_care"></textarea>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Contacto de Emergencia -->
+                <div class="form-section" id="contact-section">
+                    <h2>📞 Contacto de Emergencia</h2>
+                    
+                    <div class="form-group">
+                        <label for="veterinarian_name">Nombre del Veterinario</label>
+                        <input type="text" id="veterinarian_name" name="veterinarian_name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="veterinarian_phone">Teléfono del Veterinario</label>
+                        <input type="tel" id="veterinarian_phone" name="veterinarian_phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emergency_contact">Contacto de Emergencia</label>
+                        <input type="text" id="emergency_contact" name="emergency_contact">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emergency_phone">Teléfono de Emergencia</label>
+                        <input type="tel" id="emergency_phone" name="emergency_phone">
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Actualizando información...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'basic';
+        const tabs = ['basic', 'medical', 'contact'];
+        let petData = null;
+
+        // Obtener ID de la mascota de la URL
+        function getPetIdFromUrl() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1];
+        }
+
+        // Cargar datos de la mascota al iniciar
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Debes iniciar sesión');
+                window.location.href = '/login';
+                return;
+            }
+
+            const petId = getPetIdFromUrl();
+            if (!petId) {
+                alert('ID de mascota no válido');
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            await loadPetData(petId);
+        });
+
+        // Cargar datos de la mascota
+        async function loadPetData(petId) {
+            try {
+                const response = await fetch(`/api/pets/${petId}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    petData = data.pet;
+                    fillForm(data.pet);
+                } else {
+                    alert('Error cargando datos de la mascota');
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+                window.location.href = '/dashboard';
+            }
+        }
+
+        // Llenar el formulario con los datos actuales
+        function fillForm(pet) {
+            // Header
+            document.getElementById('petName').textContent = pet.name;
+            
+            // Current info
+            document.getElementById('currentCode').textContent = pet.pet_code;
+            document.getElementById('registrationDate').textContent = 
+                new Date(pet.created_at).toLocaleDateString();
+            
+            if (pet.photo_url) {
+                const photo = document.getElementById('currentPhoto');
+                photo.src = pet.photo_url;
+                photo.style.display = 'block';
+            }
+
+            // Hidden field
+            document.getElementById('petId').value = pet.id;
+
+            // Basic info
+            document.getElementById('name').value = pet.name || '';
+            document.getElementById('species').value = pet.species || '';
+            document.getElementById('breed').value = pet.breed || '';
+            document.getElementById('sex').value = pet.sex || '';
+            document.getElementById('color').value = pet.color || '';
+            document.getElementById('age_years').value = pet.age_years || '';
+            document.getElementById('age_months').value = pet.age_months || '';
+            document.getElementById('weight').value = pet.weight || '';
+
+            // Medical info
+            document.getElementById('microchip_code').value = pet.microchip_code || '';
+            document.getElementById('health_card_number').value = pet.health_card_number || '';
+            document.getElementById('sterilized').checked = pet.sterilized === 1;
+            document.getElementById('blood_type').value = pet.blood_type || '';
+            document.getElementById('allergies').value = pet.allergies || '';
+            document.getElementById('medical_conditions').value = pet.medical_conditions || '';
+            document.getElementById('medications').value = pet.medications || '';
+            document.getElementById('special_care').value = pet.special_care || '';
+
+            // Emergency contact
+            document.getElementById('veterinarian_name').value = pet.veterinarian_name || '';
+            document.getElementById('veterinarian_phone').value = pet.veterinarian_phone || '';
+            document.getElementById('emergency_contact').value = pet.emergency_contact || '';
+            document.getElementById('emergency_phone').value = pet.emergency_phone || '';
+        }
+
+        // Navegación entre tabs
+        function showTab(tabName) {
+            currentTab = tabName;
+            
+            // Ocultar todas las secciones
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar sección actual
+            document.getElementById(`${tabName}-section`).classList.add('active');
+            
+            // Actualizar tabs
+            document.querySelectorAll('.form-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Preview de foto
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const currentPhoto = document.getElementById('currentPhoto');
+                    currentPhoto.src = e.target.result;
+                    currentPhoto.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Envío del formulario
+        document.getElementById('editPetForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const loading = document.getElementById('loading');
+            const form = document.getElementById('editPetForm');
+            
+            // Reset alerts
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+            
+            // Crear FormData
+            const formData = new FormData(this);
+            
+            // Agregar checkbox de esterilización
+            formData.append('sterilized', document.getElementById('sterilized').checked);
+            
+            // Mostrar loading
+            form.style.display = 'none';
+            loading.style.display = 'block';
+            
+            try {
+                const petId = document.getElementById('petId').value;
+                
+                // Crear objeto con solo los campos que han cambiado
+                const updates = {};
+                for (let [key, value] of formData.entries()) {
+                    if (key !== 'petId' && key !== 'photo' && value !== petData[key]) {
+                        updates[key] = value;
+                    }
+                }
+
+                const response = await fetch(`/api/pets/${petId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify(updates)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    form.style.display = 'block';
+                    loading.style.display = 'none';
+                    successAlert.textContent = '¡Información actualizada exitosamente!';
+                    successAlert.style.display = 'block';
+                    
+                    // Recargar datos
+                    await loadPetData(petId);
+                    
+                    // Scroll al inicio
+                    window.scrollTo(0, 0);
+                    
+                    // Redirigir después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                    
+                } else {
+                    form.style.display = 'block';
+                    loading.style.display = 'none';
+                    errorAlert.textContent = result.error || 'Error al actualizar';
+                    errorAlert.style.display = 'block';
+                    window.scrollTo(0, 0);
+                }
+                
+            } catch (error) {
+                form.style.display = 'block';
+                loading.style.display = 'none';
+                console.error('Error:', error);
+                errorAlert.textContent = 'Error de conexión';
+                errorAlert.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+        });
+
+        // Cancelar edición
+        function cancelEdit() {
+            if (confirm('¿Cancelar los cambios?')) {
+                window.location.href = '/dashboard';
+            }
+        }
+    </script>
+</body>
+</html>

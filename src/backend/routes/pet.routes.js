@@ -23,6 +23,9 @@ router.post('/register',
     validatePet, 
     petController.registerPet
 );
+// Actualizar foto de mascota
+router.put('/:id/photo', authenticate, petController.uploadPhoto, petController.updatePhoto);
+
 
 // Obtener mascota por ID
 // GET /api/pets/:id

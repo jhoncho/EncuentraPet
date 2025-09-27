@@ -292,6 +292,7 @@ exports.getPetById = async (req, res) => {
 };
 
 // Actualizar mascota
+
 exports.updatePet = async (req, res) => {
     try {
         const { id } = req.params;
@@ -308,6 +309,21 @@ exports.updatePet = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Mascota no encontrada'
+            });
+        }
+        
+        // Filtrar campos no actualizables
+        delete updates.id;
+        delete updates.user_id;
+        delete updates.pet_code;
+        delete updates.qr_code;
+        delete updates.created_at;
+        
+        // Si no hay campos para actualizar
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'No hay campos para actualizar'
             });
         }
         
@@ -330,7 +346,7 @@ exports.updatePet = async (req, res) => {
         console.error('Error actualizando mascota:', error);
         res.status(500).json({
             success: false,
-            error: 'Error al actualizar mascota'
+            error: 'Error al actualizar mascota: ' + error.message
         });
     }
 };
@@ -558,6 +574,62 @@ exports.regenerateQR = async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Error al regenerar código QR'
+        });
+    }
+};
+
+// Agregar ruta específica para actualizar foto
+exports.updatePhoto = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const photoUrl = req.file ? `/uploads/pet-photos/${req.file.filename}` : null;
+        
+        if (!photoUrl) {
+            return res.status(400).json({
+                success: false,
+                error: 'No se proporcionó foto'
+            });
+        }
+        
+        // Verificar que la mascota pertenece al usuario
+        const pet = await getOne(
+            'SELECT id, photo_url FROM pets WHERE id = ? AND user_id = ?',
+            [id, userId]
+        );
+        
+        if (!pet) {
+            return res.status(404).json({
+                success: false,
+                error: 'Mascota no encontrada'
+            });
+        }
+        
+        // Eliminar foto anterior si existe
+        if (pet.photo_url) {
+            const oldPath = path.join(__dirname, '../..', pet.photo_url);
+            if (fs.existsSync(oldPath)) {
+                fs.unlinkSync(oldPath);
+            }
+        }
+        
+        // Actualizar URL de foto
+        await runQuery(
+            'UPDATE pets SET photo_url = ? WHERE id = ?',
+            [photoUrl, id]
+        );
+        
+        res.json({
+            success: true,
+            message: 'Foto actualizada',
+            photoUrl
+        });
+        
+    } catch (error) {
+        console.error('Error actualizando foto:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al actualizar foto'
         });
     }
 };

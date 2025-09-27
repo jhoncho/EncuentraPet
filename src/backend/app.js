@@ -75,6 +75,9 @@ app.get('/admin', (req, res) => {
 });
 
 
+app.get('/edit-pet/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/edit-pet.html'));
+});
 
 // Manejo de errores 404
 app.use((req, res) => {
