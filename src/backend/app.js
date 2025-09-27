@@ -75,6 +75,7 @@ app.get('/admin', (req, res) => {
 });
 
 
+// Ruta para editar mascota
 app.get('/edit-pet/:id', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/edit-pet.html'));
 });
