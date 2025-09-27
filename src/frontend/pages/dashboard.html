@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel - EncuentraPet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: #f1f3f5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #e9ecef;
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: #6c757d;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.pets {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .stat-icon.qr {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .stat-icon.alerts {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-info p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Actions Section */
+        .actions-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Pets Grid */
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pet-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .pet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .pet-photo {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f5f7fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .pet-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-lost {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .pet-info {
+            padding: 1.5rem;
+        }
+
+        .pet-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-details {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .pet-code {
+            background: #f5f7fa;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #495057;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .pet-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .btn-action:hover {
+            background: #f5f7fa;
+            border-color: #adb5bd;
+        }
+
+        .btn-action.primary {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+        }
+
+        .btn-action.primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .qr-display {
+            margin: 2rem 0;
+        }
+
+        .qr-display img {
+            width: 250px;
+            height: 250px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .pets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🐾</div>
+                <span class="logo-text">EncuentraPet</span>
+            </a>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span class="user-name" id="userName">Usuario</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1 class="welcome-title">¡Hola, <span id="welcomeName">Usuario</span>! 👋</h1>
+            <p class="welcome-subtitle">Gestiona y protege a tus mascotas desde tu panel personal</p>
+        </section>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon pets">🐕</div>
+                <div class="stat-info">
+                    <h3 id="totalPets">0</h3>
+                    <p>Mascotas Registradas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon qr">📱</div>
+                <div class="stat-info">
+                    <h3 id="totalScans">0</h3>
+                    <p>Escaneos QR</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon alerts">🔔</div>
+                <div class="stat-info">
+                    <h3 id="totalAlerts">0</h3>
+                    <p>Alertas Activas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pets Section -->
+        <section class="actions-section">
+            <div class="section-header">
+                <h2 class="section-title">Mis Mascotas</h2>
+                <a href="/register-pet" class="btn-primary">
+                    <span>➕</span> Agregar Mascota
+                </a>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <p>Cargando tus mascotas...</p>
+            </div>
+
+            <!-- Pets Grid -->
+            <div class="pets-grid" id="petsGrid" style="display: none;">
+                <!-- Las mascotas se cargarán aquí dinámicamente -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">🐾</div>
+                <h3 class="empty-title">No tienes mascotas registradas</h3>
+                <p class="empty-text">Protege a tu mascota con un código QR único</p>
+                <a href="/register-pet" class="btn-primary">Registrar Primera Mascota</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- QR Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <h3>Código QR de <span id="modalPetName"></span></h3>
+            <div class="qr-display">
+                <img id="modalQrImage" src="" alt="Código QR">
+            </div>
+            <p><strong>Código:</strong> <span id="modalPetCode"></span></p>
+            <div class="modal-actions">
+                <button class="btn-action" onclick="downloadQR()">📥 Descargar</button>
+                <button class="btn-action" onclick="closeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentQR = null;
+        let currentPetCode = null;
+
+        // Verificar autenticación
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = localStorage.getItem('userId');
+            const userName = localStorage.getItem('userName');
+            const token = localStorage.getItem('token');
+
+            if (!userId || !token) {
+                alert('Debes iniciar sesión');
+                window.location.href = '/login';
+                return;
+            }
+
+            // Mostrar nombre del usuario
+            if (userName) {
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('welcomeName').textContent = userName;
+                document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+            }
+
+            // Cargar mascotas
+            loadPets();
+        });
+
+        // Cargar mascotas del usuario
+        async function loadPets() {
+            try {
+                const response = await fetch('/api/users/pets', {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayPets(data.pets);
+                    updateStats(data.pets);
+                } else {
+                    console.error('Error cargando mascotas:', data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Mostrar mascotas
+        function displayPets(pets) {
+            const loadingState = document.getElementById('loadingState');
+            const petsGrid = document.getElementById('petsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            loadingState.style.display = 'none';
+
+            if (!pets || pets.length === 0) {
+                emptyState.style.display = 'block';
+                petsGrid.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            petsGrid.style.display = 'grid';
+
+            petsGrid.innerHTML = pets.map(pet => `
+                <div class="pet-card">
+                    <div class="pet-photo">
+                        ${pet.photo_url ? 
+                            `<img src="${pet.photo_url}" alt="${pet.name}" style="width:100%; height:100%; object-fit:cover;">` : 
+                            getPetEmoji(pet.species)
+                        }
+                        <span class="pet-status ${pet.is_lost ? 'status-lost' : 'status-safe'}">
+                            ${pet.is_lost ? '⚠️ Perdida' : '✓ Segura'}
+                        </span>
+                    </div>
+                    <div class="pet-info">
+                        <h3 class="pet-name">${pet.name}</h3>
+                        <p class="pet-details">
+                            ${pet.species} ${pet.breed ? `• ${pet.breed}` : ''}<br>
+                            ${pet.sex} • ${pet.color}<br>
+                            ${pet.age_years ? `${pet.age_years} años` : ''} ${pet.age_months ? `${pet.age_months} meses` : ''}
+                        </p>
+                        <div class="pet-code">
+                            ${pet.pet_code}
+                        </div>
+                        <div class="pet-actions">
+                            <button class="btn-action primary" onclick="showQR('${pet.pet_code}', '${pet.name}', '${pet.qr_code}')">
+                                Ver QR
+                            </button>
+                            <button class="btn-action" onclick="editPet(${pet.id})">
+                                Editar
+                            </button>
+                            ${pet.is_lost ? 
+                                `<button class="btn-action" onclick="markFound(${pet.id})">Encontrada</button>` :
+                                `<button class="btn-action" onclick="markLost(${pet.id})">Perdida</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Obtener emoji según especie
+        function getPetEmoji(species) {
+            const emojis = {
+                'Perro': '🐕',
+                'Gato': '🐈',
+                'Conejo': '🐰',
+                'Ave': '🦜',
+                'Otro': '🐾'
+            };
+            return `<span style="font-size: 4rem;">${emojis[species] || '🐾'}</span>`;
+        }
+
+        // Actualizar estadísticas
+        function updateStats(pets) {
+            document.getElementById('totalPets').textContent = pets.length;
+            document.getElementById('totalAlerts').textContent = pets.filter(p => p.is_lost).length;
+            // TODO: Obtener total de escaneos del backend
+        }
+
+        // Mostrar QR en modal
+        function showQR(petCode, petName, qrCode) {
+            currentQR = qrCode;
+            currentPetCode = petCode;
+            
+            document.getElementById('modalPetName').textContent = petName;
+            document.getElementById('modalPetCode').textContent = petCode;
+            document.getElementById('modalQrImage').src = qrCode;
+            document.getElementById('qrModal').classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        // Descargar QR
+        function downloadQR() {
+            if (!currentQR) return;
+            
+            const link = document.createElement('a');
+            link.download = `qr-${currentPetCode}.png`;
+            link.href = currentQR;
+            link.click();
+        }
+
+        // Marcar como perdida
+        async function markLost(petId) {
+            if (!confirm('¿Marcar esta mascota como perdida?')) return;
+
+            try {
+                const response = await fetch(`/api/pets/${petId}/lost`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Mascota marcada como perdida. Te notificaremos si alguien la encuentra.');
+                    loadPets();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Marcar como encontrada
+        async function markFound(petId) {
+            if (!confirm('¿Tu mascota ya está contigo?')) return;
+
+            try {
+                const response = await fetch(`/api/pets/${petId}/found`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                if (response.ok) {
+                    alert('¡Qué bueno! Mascota marcada como segura.');
+                    loadPets();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Editar mascota
+        function editPet(petId) {
+            // TODO: Implementar edición
+            window.location.href = `/edit-pet/${petId}`;
+        }
+
+        // Cerrar sesión
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                localStorage.clear();
+                window.location.href = '/';
+            }
+        }
+
+        // Cerrar modal con click fuera
+        document.getElementById('qrModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

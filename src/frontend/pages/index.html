@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncuentraPet - Sistema de Identificación de Mascotas con QR</title>
+    <meta name="description" content="Protege a tu mascota con tecnología QR y GPS. Sistema de identificación para Bolivia.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff5f5;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #ff6b6b;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.2);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 5rem;
+            background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            background: linear-gradient(135deg, #fed7d7, #fbb6ce);
+            color: #744210;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            color: #1a1a1a;
+        }
+
+        .hero-highlight {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #ff6b6b;
+            padding: 1.2rem 2.5rem;
+            border: 2px solid #fed7d7;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #ff6b6b;
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ff6b6b;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-stat p {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            border-radius: 35px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.3);
+            position: relative;
+            transform: rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .phone-mockup:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 25px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+
+        .pet-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #fed7d7, #fbb6ce);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            border: 4px solid #ff6b6b;
+        }
+
+        .pet-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .pet-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .pet-info-label {
+            color: #6c757d;
+        }
+
+        .pet-info-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .vaccination-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        .qr-code-display {
+            width: 100px;
+            height: 100px;
+            background: #fef2f2;
+            border: 3px solid #ff6b6b;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #ff6b6b;
+            font-weight: 700;
+            margin-top: auto;
+        }
+
+        /* Features */
+        .features {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature {
+            background: linear-gradient(135deg, #fff5f5, #fef2f2);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid #fed7d7;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+        }
+
+        .feature:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fed7d7, #fbb6ce);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .feature h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .feature p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Process */
+        .process {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #fef2f2, #fff5f5);
+        }
+
+        .process-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.08);
+            border: 1px solid #fed7d7;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.12);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .step p {
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+        }
+
+        .btn-white {
+            background: white;
+            color: #ff6b6b;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #ff6b6b;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #cbd5e0;
+            text-decoration: none;
+            line-height: 1.8;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: #ff6b6b;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #a0aec0;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🐾</div>
+                <span>EncuentraPet</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#caracteristicas">Características</a></li>
+                <li><a href="#como-funciona">Cómo Funciona</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <a href="/signup" class="nav-cta">Crear Cuenta</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="inicio" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">🚀 Sistema #1 en Bolivia</div>
+                <h1>Nunca Pierdas a Tu <span class="hero-highlight">Mascota</span> Otra Vez</h1>
+                <p class="subtitle">Código QR único + GPS en tiempo real + Registro sanitario completo. Protege a tu mascota con tecnología inteligente.</p>
+                
+                <div class="hero-buttons">
+                    <a href="/signup" class="btn-primary">Proteger Mi Mascota</a>
+                    <a href="#como-funciona" class="btn-secondary">Ver Cómo Funciona</a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <h3>1,250+</h3>
+                        <p>Mascotas Protegidas</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>95%</h3>
+                        <p>Tasa de Éxito</p>
+                    </div>
+                    <div class="hero-stat">
+                        <h3>15min</h3>
+                        <p>Tiempo Promedio</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="app-header">EncuentraPet</div>
+                        <div class="pet-avatar">🐕</div>
+                        <div class="pet-name">Rocky</div>
+                        
+                        <div class="pet-info">
+                            <div class="pet-info-row">
+                                <span class="pet-info-label">Raza:</span>
+                                <span class="pet-info-value">Golden Retriever</span>
+                            </div>
+                            <div class="pet-info-row">
+                                <span class="pet-info-label">Edad:</span>
+                                <span class="pet-info-value">3 años</span>
+                            </div>
+                            <div class="pet-info-row">
+                                <span class="pet-info-label">Dueño:</span>
+                                <span class="pet-info-value">Carlos M.</span>
+                            </div>
+                        </div>
+                        
+                        <div class="vaccination-badge">✅ Vacunas al día</div>
+                        
+                        <div class="qr-code-display">QR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="caracteristicas" class="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Todo Lo Que Necesitas Para Proteger a Tu Mascota</h2>
+                <p>Sistema completo de identificación y registro sanitario</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">📍</div>
+                    <h3>GPS en Tiempo Real</h3>
+                    <p>Cuando alguien encuentra tu mascota y escanea el QR, recibes la ubicación exacta al instante en tu celular.</p>
+                    <div class="feature-tag">Localización inmediata</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💉</div>
+                    <h3>Registro de Vacunas</h3>
+                    <p>Historial completo de vacunación, desparasitación y consultas médicas. Todo en un solo lugar.</p>
+                    <div class="feature-tag">Carnet digital</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Alertas Automáticas</h3>
+                    <p>Recordatorios de próximas vacunas, desparasitaciones y consultas veterinarias.</p>
+                    <div class="feature-tag">Nunca olvides</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏥</div>
+                    <h3>Info de Emergencia</h3>
+                    <p>Alergias, medicamentos y condiciones médicas visibles para quien encuentre a tu mascota.</p>
+                    <div class="feature-tag">Salva vidas</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Sin Apps Necesarias</h3>
+                    <p>Cualquier persona con un celular puede escanear el QR y ayudar. No necesita descargar nada.</p>
+                    <div class="feature-tag">Universal</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacidad Protegida</h3>
+                    <p>Tu información personal está segura. Solo se muestra lo necesario para recuperar a tu mascota.</p>
+                    <div class="feature-tag">100% seguro</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section id="como-funciona" class="process">
+        <div class="process-container">
+            <div class="section-header">
+                <h2>Protege a Tu Mascota en 4 Simples Pasos</h2>
+                <p>Proceso rápido y sencillo, menos de 10 minutos</p>
+            </div>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Crea Tu Cuenta</h3>
+                    <p>Regístrate con tu email y datos básicos. Es gratis y toma 1 minuto.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Registra Tu Mascota</h3>
+                    <p>Agrega los datos de tu mascota, historial médico y fotos.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Obtén el Código QR</h3>
+                    <p>Descarga e imprime el QR único, o pide una placa resistente.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>¡Listo!</h3>
+                    <p>Tu mascota está protegida. Si se pierde, serás notificado inmediatamente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Protege a Tu Mascota Hoy Mismo</h2>
+            <p>Miles de familias en Bolivia ya confían en EncuentraPet</p>
+            <a href="/signup" class="btn-white">Crear Mi Cuenta Gratis</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>EncuentraPet</h3>
+                <p>Sistema de identificación inteligente para mascotas en Bolivia.</p>
+                <p>La Paz, Bolivia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Enlaces</h3>
+                <p><a href="/signup">Crear Cuenta</a></p>
+                <p><a href="/login">Iniciar Sesión</a></p>
+                <p><a href="#caracteristicas">Características</a></p>
+                <p><a href="#como-funciona">Cómo Funciona</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Soporte</h3>
+                <p>soporte@encuentrapet.com</p>
+                <p>WhatsApp: +591 70000000</p>
+                <p>Lun-Vie: 9:00 - 18:00</p>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <p><a href="/terminos">Términos y Condiciones</a></p>
+                <p><a href="/privacidad">Política de Privacidad</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 EncuentraPet. Todos los derechos reservados. Hecho con ❤️ en Bolivia</p>
+        </div>
+    </footer>
+</body>
+</html>
