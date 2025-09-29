@@ -33,7 +33,11 @@ router.get('/:id', authenticate, petController.getPetById);
 
 // Actualizar mascota
 // PUT /api/pets/:id
-router.put('/:id', authenticate, petController.updatePet);
+router.put('/:id', 
+    authenticate, 
+    petController.uploadPhoto,  // Agregar el middleware de upload
+    petController.updatePet
+);
 
 // Eliminar mascota (soft delete)
 // DELETE /api/pets/:id

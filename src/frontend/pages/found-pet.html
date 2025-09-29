@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mascota Encontrada - EncuentraPet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header con estado de emergencia */
+        .header-lost {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-safe {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Contenido */
+        .content {
+            padding: 20px;
+        }
+
+        /* Foto de mascota */
+        .pet-photo {
+            width: 200px;
+            height: 200px;
+            margin: -100px auto 20px;
+            border-radius: 50%;
+            border: 5px solid white;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .pet-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pet-emoji {
+            font-size: 80px;
+        }
+
+        /* Información básica */
+        .pet-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .pet-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .pet-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Alerta médica */
+        .medical-alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .medical-alert h3 {
+            color: #856404;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .medical-alert p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Acciones principales */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-action {
+            padding: 18px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+
+        .btn-call {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-call:hover {
+            background: #0056b3;
+        }
+
+        /* Sección de ubicación */
+        .location-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .location-section h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .location-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-location {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-location:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Información del dueño */
+        .owner-info {
+            background: #e8f5f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .owner-info h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .owner-details {
+            font-size: 14px;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        /* Estados de carga */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mensajes */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .pet-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+        <div class="container">
+            <div class="content">
+                <div class="spinner"></div>
+                <p>Cargando información de la mascota...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden initially) -->
+    <div class="container" id="mainContent" style="display: none;">
+        <!-- Dynamic header based on lost status -->
+        <div id="headerSection" class="header-safe">
+            <h1>🐾 ¡Mascota Encontrada!</h1>
+            <p>Ayúdanos a reunir a esta mascota con su familia</p>
+            <div class="status-badge" id="statusBadge">Mascota Segura</div>
+        </div>
+
+        <div class="content">
+            <!-- Pet Photo -->
+            <div class="pet-photo">
+                <img id="petPhoto" src="" alt="Foto de mascota" style="display: none;">
+                <span id="petEmoji" class="pet-emoji">🐾</span>
+            </div>
+
+            <!-- Pet Info -->
+            <div class="pet-info">
+                <h2 class="pet-name" id="petName">Cargando...</h2>
+                
+                <div class="pet-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Especie</div>
+                        <div class="detail-value" id="petSpecies">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Raza</div>
+                        <div class="detail-value" id="petBreed">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Sexo</div>
+                        <div class="detail-value" id="petSex">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Color</div>
+                        <div class="detail-value" id="petColor">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Edad</div>
+                        <div class="detail-value" id="petAge">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Tamaño</div>
+                        <div class="detail-value" id="petWeight">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Alert (if applicable) -->
+            <div class="medical-alert" id="medicalAlert" style="display: none;">
+                <h3>⚠️ Información Médica Importante</h3>
+                <p id="medicalInfo"></p>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div class="success-message" id="successMessage"></div>
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn-action btn-primary" onclick="scrollToLocation()">
+                    📍 Reportar Ubicación
+                </button>
+                <a id="whatsappBtn" href="#" class="btn-action btn-whatsapp" style="text-decoration: none;">
+                    📱 Contactar por WhatsApp
+                </a>
+                <a id="callBtn" href="#" class="btn-action btn-call" style="text-decoration: none;">
+                    📞 Llamar al Dueño
+                </a>
+            </div>
+
+            <!-- Location Report Section -->
+            <div class="location-section">
+                <h3>📍 Reportar Ubicación</h3>
+                <form id="locationForm" class="location-form">
+                    <div class="form-group">
+                        <label for="finderName">Tu Nombre *</label>
+                        <input type="text" id="finderName" name="finderName" required placeholder="Juan Pérez">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="finderPhone">Tu Teléfono *</label>
+                        <input type="tel" id="finderPhone" name="finderPhone" required placeholder="+591 70000000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="finderMessage">Mensaje (Opcional)</label>
+                        <textarea id="finderMessage" name="finderMessage" placeholder="Describe dónde y cómo encontraste a la mascota..."></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn-location" onclick="getLocationAndSubmit()">
+                        🌍 Compartir Mi Ubicación
+                    </button>
+                    
+                    <div id="locationStatus" style="margin-top: 10px; text-align: center; color: #6c757d; font-size: 14px;"></div>
+                </form>
+            </div>
+
+            <!-- Owner Info -->
+            <div class="owner-info">
+                <h3>Información del Dueño</h3>
+                <div class="owner-details">
+                    <p><strong id="ownerName">-</strong></p>
+                    <p id="ownerLocation">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Protegido por <a href="/">EncuentraPet</a></p>
+            <p>Sistema de identificación de mascotas</p>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let petData = null;
+        let petCode = null;
+        let currentLocation = null;
+
+        // Obtener código de mascota de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const pathParts = window.location.pathname.split('/');
+            petCode = pathParts[pathParts.length - 1];
+            
+            if (!petCode || petCode === 'pet') {
+                showError('Código de mascota no válido');
+                return;
+            }
+            
+            loadPetData(petCode);
+        });
+
+        // Cargar datos de la mascota
+        async function loadPetData(code) {
+            try {
+                const response = await fetch(`/api/pets/public/${code}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    petData = data.pet;
+                    displayPetInfo(data.pet);
+                    registerScan();
+                } else {
+                    showError('Mascota no encontrada');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error cargando información');
+            }
+        }
+
+        // Mostrar información de la mascota
+        function displayPetInfo(pet) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+
+            // Actualizar header según estado
+            const header = document.getElementById('headerSection');
+            const statusBadge = document.getElementById('statusBadge');
+            
+            if (pet.is_lost) {
+                header.className = 'header-lost pulse';
+                header.innerHTML = `
+                    <h1>⚠️ ¡MASCOTA PERDIDA!</h1>
+                    <p>Esta mascota está buscando a su familia</p>
+                    <div class="status-badge">EXTRAVIADA - Por favor ayuda</div>
+                `;
+            }
+
+            // Foto
+            if (pet.photo_url) {
+                document.getElementById('petPhoto').src = pet.photo_url;
+                document.getElementById('petPhoto').style.display = 'block';
+                document.getElementById('petEmoji').style.display = 'none';
+            } else {
+                const emojis = {
+                    'Perro': '🐕',
+                    'Gato': '🐈',
+                    'Conejo': '🐰',
+                    'Ave': '🦜'
+                };
+                document.getElementById('petEmoji').textContent = emojis[pet.species] || '🐾';
+            }
+
+            // Información básica
+            document.getElementById('petName').textContent = pet.name;
+            document.getElementById('petSpecies').textContent = pet.species;
+            document.getElementById('petBreed').textContent = pet.breed || 'Mixta';
+            document.getElementById('petSex').textContent = pet.sex;
+            document.getElementById('petColor').textContent = pet.color;
+            
+            // Edad
+            let age = '';
+            if (pet.age_years) age += `${pet.age_years} años`;
+            if (pet.age_months) {
+                if (age) age += ', ';
+                age += `${pet.age_months} meses`;
+            }
+            document.getElementById('petAge').textContent = age || 'No especificada';
+            
+            // Peso
+            document.getElementById('petWeight').textContent = pet.weight ? `${pet.weight} kg` : 'No especificado';
+
+            // Información médica
+            const medicalInfo = [];
+            if (pet.allergies) medicalInfo.push(`Alergias: ${pet.allergies}`);
+            if (pet.medical_conditions) medicalInfo.push(`Condiciones: ${pet.medical_conditions}`);
+            if (pet.medications) medicalInfo.push(`Medicamentos: ${pet.medications}`);
+            if (pet.special_care) medicalInfo.push(`Cuidados especiales: ${pet.special_care}`);
+            
+            if (medicalInfo.length > 0) {
+                document.getElementById('medicalAlert').style.display = 'block';
+                document.getElementById('medicalInfo').innerHTML = medicalInfo.join('<br>');
+            }
+
+            // Información del dueño
+            if (pet.owner) {
+                document.getElementById('ownerName').textContent = pet.owner.name;
+                document.getElementById('ownerLocation').textContent = `${pet.owner.city}, ${pet.owner.department}`;
+                
+                // Configurar botones de contacto
+                if (pet.owner.whatsapp) {
+                    const whatsappMsg = encodeURIComponent(`Hola, encontré a ${pet.name}. Vi su código QR de EncuentraPet.`);
+                    document.getElementById('whatsappBtn').href = `https://wa.me/${pet.owner.whatsapp.replace(/\D/g, '')}?text=${whatsappMsg}`;
+                } else {
+                    document.getElementById('whatsappBtn').style.display = 'none';
+                }
+                
+                if (pet.owner.phone) {
+                    document.getElementById('callBtn').href = `tel:${pet.owner.phone}`;
+                } else {
+                    document.getElementById('callBtn').style.display = 'none';
+                }
+            }
+        }
+
+        // Registrar escaneo
+        async function registerScan() {
+            try {
+                await fetch(`/api/pets/scan/${petCode}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+            } catch (error) {
+                console.error('Error registrando escaneo:', error);
+            }
+        }
+
+        // Scroll a sección de ubicación
+        function scrollToLocation() {
+            document.querySelector('.location-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // Obtener ubicación y enviar
+        function getLocationAndSubmit() {
+            const statusDiv = document.getElementById('locationStatus');
+            statusDiv.textContent = 'Obteniendo tu ubicación...';
+            
+            if (!navigator.geolocation) {
+                statusDiv.textContent = 'Tu navegador no soporta geolocalización';
+                submitWithoutLocation();
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    statusDiv.textContent = '📍 Ubicación obtenida';
+                    submitLocationReport();
+                },
+                (error) => {
+                    console.error('Error obteniendo ubicación:', error);
+                    statusDiv.textContent = 'No se pudo obtener la ubicación';
+                    submitWithoutLocation();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        // Enviar reporte con ubicación
+        async function submitLocationReport() {
+            const form = document.getElementById('locationForm');
+            const formData = new FormData(form);
+            
+            if (!formData.get('finderName') || !formData.get('finderPhone')) {
+                alert('Por favor completa tu nombre y teléfono');
+                return;
+            }
+            
+            const data = {
+                petCode: petCode,
+                finderName: formData.get('finderName'),
+                finderPhone: formData.get('finderPhone'),
+                message: formData.get('finderMessage'),
+                location: currentLocation
+            };
+            
+            try {
+                const response = await fetch('/api/locations/report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('¡Gracias! El dueño ha sido notificado con tu ubicación.');
+                    form.reset();
+                    document.getElementById('locationStatus').textContent = '';
+                } else {
+                    showError('Error enviando el reporte');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        // Enviar sin ubicación
+        function submitWithoutLocation() {
+            currentLocation = null;
+            submitLocationReport();
+        }
+
+        // Mostrar mensaje de éxito
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Mostrar mensaje de error
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else {
+                alert(message);
+            }
+        }
+    </script>
+</body>
+</html>

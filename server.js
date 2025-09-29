@@ -50,3 +50,4 @@ process.on('unhandledRejection', (err) => {
     console.error('Promesa rechazada no manejada:', err);
     process.exit(1);
 });
+

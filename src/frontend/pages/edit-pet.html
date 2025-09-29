@@ -34,41 +34,69 @@
             text-align: center;
         }
 
+        .header .logo {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
         .header h1 {
             font-size: 24px;
             margin-bottom: 10px;
         }
 
         .header p {
-            font-size: 14px;
+            font-size: 16px;
             opacity: 0.9;
+        }
+
+        .pet-code-display {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 14px;
         }
 
         .content {
             padding: 30px;
         }
 
-        .pet-current-info {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-left: 4px solid #4ecdc4;
+        .nav-links {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .pet-current-info h3 {
+        .back-link {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover {
             color: #495057;
-            margin-bottom: 15px;
-            font-size: 16px;
         }
 
-        .current-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 2px solid #dee2e6;
+        .delete-btn {
+            color: #dc3545;
+            background: none;
+            border: 1px solid #dc3545;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #dc3545;
+            color: white;
         }
 
         .form-tabs {
@@ -115,6 +143,9 @@
             color: #495057;
             margin-bottom: 20px;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .form-group {
@@ -127,6 +158,10 @@
             font-weight: 600;
             color: #495057;
             font-size: 14px;
+        }
+
+        .form-group label span.required {
+            color: #ff6b6b;
         }
 
         .form-group input,
@@ -159,10 +194,22 @@
             gap: 15px;
         }
 
+        .current-photo {
+            margin-bottom: 15px;
+        }
+
+        .current-photo img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
         .photo-upload {
             border: 2px dashed #e9ecef;
             border-radius: 12px;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -175,6 +222,15 @@
 
         .photo-upload input[type="file"] {
             display: none;
+        }
+
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            margin: 20px auto;
+            display: none;
+            object-fit: cover;
         }
 
         .checkbox-group {
@@ -194,8 +250,6 @@
             display: flex;
             gap: 15px;
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
         }
 
         .btn {
@@ -206,9 +260,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
         }
 
         .btn-secondary {
@@ -224,20 +275,39 @@
             background: linear-gradient(45deg, #4ecdc4, #44a08d);
             color: white;
             flex: 1;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
         }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
-        .btn-danger:hover {
-            background: #c82333;
+        .success-alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-alert {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
         }
 
         .loading {
@@ -261,28 +331,34 @@
             100% { transform: rotate(360deg); }
         }
 
-        .alert {
-            padding: 12px;
+        .qr-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .qr-code-img {
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            display: block;
+            border: 2px solid #dee2e6;
             border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            padding: 10px;
+            background: white;
         }
 
         @media (max-width: 600px) {
             .form-row {
                 grid-template-columns: 1fr;
+            }
+            .form-tabs {
+                flex-wrap: wrap;
+            }
+            .form-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -290,29 +366,26 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="logo">🐾</div>
             <h1>Editar Información de Mascota</h1>
-            <p>Actualiza los datos de <span id="petName"></span></p>
+            <p>Actualiza los datos de tu mascota</p>
+            <div class="pet-code-display" id="petCode">Código: PET_XXXXX</div>
         </div>
 
         <div class="content">
-            <!-- Back to Dashboard -->
-            <div style="text-align: right; margin-bottom: 20px;">
-                <a href="/dashboard" style="color: #6c757d; text-decoration: none; font-size: 14px;">
+            <!-- Navigation -->
+            <div class="nav-links">
+                <a href="/dashboard" class="back-link">
                     ← Volver al Dashboard
                 </a>
+                <button class="delete-btn" onclick="deletePet()">
+                    🗑️ Eliminar Mascota
+                </button>
             </div>
 
             <!-- Alerts -->
-            <div class="alert alert-success" id="successAlert"></div>
-            <div class="alert alert-error" id="errorAlert"></div>
-
-            <!-- Current Pet Info -->
-            <div class="pet-current-info">
-                <h3>Información Actual</h3>
-                <img id="currentPhoto" class="current-photo" src="" alt="Foto actual" style="display:none;">
-                <p><strong>Código:</strong> <span id="currentCode"></span></p>
-                <p><strong>Registrada:</strong> <span id="registrationDate"></span></p>
-            </div>
+            <div class="success-alert" id="successAlert"></div>
+            <div class="error-alert" id="errorAlert"></div>
 
             <!-- Form Tabs -->
             <div class="form-tabs">
@@ -325,23 +398,26 @@
                 <button class="form-tab" onclick="showTab('contact')">
                     Contacto de Emergencia
                 </button>
+                <button class="form-tab" onclick="showTab('qr')">
+                    Código QR
+                </button>
             </div>
 
             <form id="editPetForm">
                 <input type="hidden" id="petId" name="petId">
-
+                
                 <!-- Tab 1: Información Básica -->
                 <div class="form-section active" id="basic-section">
                     <h2>📝 Información Básica</h2>
                     
                     <div class="form-group">
-                        <label for="name">Nombre de tu mascota</label>
+                        <label for="name">Nombre de tu mascota <span class="required">*</span></label>
                         <input type="text" id="name" name="name" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="species">Especie</label>
+                            <label for="species">Especie <span class="required">*</span></label>
                             <select id="species" name="species" required>
                                 <option value="">Selecciona</option>
                                 <option value="Perro">🐕 Perro</option>
@@ -359,7 +435,7 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="sex">Sexo</label>
+                            <label for="sex">Sexo <span class="required">*</span></label>
                             <select id="sex" name="sex" required>
                                 <option value="">Selecciona</option>
                                 <option value="Macho">♂️ Macho</option>
@@ -367,7 +443,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="color">Color/Marcas</label>
+                            <label for="color">Color/Marcas <span class="required">*</span></label>
                             <input type="text" id="color" name="color" required>
                         </div>
                     </div>
@@ -388,14 +464,19 @@
                         <input type="number" id="weight" name="weight" step="0.1" min="0">
                     </div>
 
-                    <!-- Photo Upload -->
+                    <!-- Photo -->
                     <div class="form-group">
-                        <label>Cambiar foto</label>
+                        <label>Foto de tu mascota</label>
+                        <div class="current-photo" id="currentPhotoDiv" style="display:none;">
+                            <p style="margin-bottom: 10px;">Foto actual:</p>
+                            <img id="currentPhoto" src="" alt="Foto actual">
+                        </div>
                         <div class="photo-upload" onclick="document.getElementById('photo').click()">
                             <input type="file" id="photo" name="photo" accept="image/*" onchange="previewPhoto(event)">
                             <div>📷</div>
                             <p>Click para cambiar foto</p>
                             <small>JPG, PNG o GIF - Máx 5MB</small>
+                            <img id="photoPreview" class="photo-preview">
                         </div>
                     </div>
                 </div>
@@ -471,12 +552,28 @@
                     </div>
                 </div>
 
+                <!-- Tab 4: QR Code -->
+                <div class="form-section" id="qr-section">
+                    <h2>📱 Código QR</h2>
+                    
+                    <div class="qr-section">
+                        <p>Este es el código QR único de tu mascota:</p>
+                        <img id="qrCodeImg" class="qr-code-img" src="" alt="Código QR">
+                        <button type="button" class="btn btn-secondary" onclick="downloadQR()">
+                            📥 Descargar QR
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="regenerateQR()" style="margin-top: 10px;">
+                            🔄 Regenerar QR
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/dashboard'">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
                         Guardar Cambios
                     </button>
                 </div>
@@ -485,39 +582,31 @@
             <!-- Loading -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>Actualizando información...</p>
+                <p>Guardando cambios...</p>
             </div>
         </div>
     </div>
 
     <script>
+        // Variables globales
         let currentTab = 'basic';
-        const tabs = ['basic', 'medical', 'contact'];
+        const tabs = ['basic', 'medical', 'contact', 'qr'];
         let petData = null;
+        let currentPetId = null;
 
         // Obtener ID de la mascota de la URL
-        function getPetIdFromUrl() {
-            const pathParts = window.location.pathname.split('/');
-            return pathParts[pathParts.length - 1];
-        }
-
-        // Cargar datos de la mascota al iniciar
-        document.addEventListener('DOMContentLoaded', async function() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                alert('Debes iniciar sesión');
-                window.location.href = '/login';
-                return;
-            }
-
-            const petId = getPetIdFromUrl();
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const petId = urlParams.get('id');
+            
             if (!petId) {
-                alert('ID de mascota no válido');
+                alert('ID de mascota no especificado');
                 window.location.href = '/dashboard';
                 return;
             }
-
-            await loadPetData(petId);
+            
+            currentPetId = petId;
+            loadPetData(petId);
         });
 
         // Cargar datos de la mascota
@@ -533,7 +622,7 @@
 
                 if (data.success) {
                     petData = data.pet;
-                    fillForm(data.pet);
+                    populateForm(data.pet);
                 } else {
                     alert('Error cargando datos de la mascota');
                     window.location.href = '/dashboard';
@@ -541,30 +630,15 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error de conexión');
-                window.location.href = '/dashboard';
             }
         }
 
-        // Llenar el formulario con los datos actuales
-        function fillForm(pet) {
-            // Header
-            document.getElementById('petName').textContent = pet.name;
-            
-            // Current info
-            document.getElementById('currentCode').textContent = pet.pet_code;
-            document.getElementById('registrationDate').textContent = 
-                new Date(pet.created_at).toLocaleDateString();
-            
-            if (pet.photo_url) {
-                const photo = document.getElementById('currentPhoto');
-                photo.src = pet.photo_url;
-                photo.style.display = 'block';
-            }
-
-            // Hidden field
+        // Llenar formulario con datos existentes
+        function populateForm(pet) {
             document.getElementById('petId').value = pet.id;
-
-            // Basic info
+            document.getElementById('petCode').textContent = `Código: ${pet.pet_code}`;
+            
+            // Información básica
             document.getElementById('name').value = pet.name || '';
             document.getElementById('species').value = pet.species || '';
             document.getElementById('breed').value = pet.breed || '';
@@ -573,22 +647,33 @@
             document.getElementById('age_years').value = pet.age_years || '';
             document.getElementById('age_months').value = pet.age_months || '';
             document.getElementById('weight').value = pet.weight || '';
-
-            // Medical info
+            
+            // Foto actual
+            if (pet.photo_url) {
+                document.getElementById('currentPhotoDiv').style.display = 'block';
+                document.getElementById('currentPhoto').src = pet.photo_url;
+            }
+            
+            // Información médica
             document.getElementById('microchip_code').value = pet.microchip_code || '';
             document.getElementById('health_card_number').value = pet.health_card_number || '';
-            document.getElementById('sterilized').checked = pet.sterilized === 1;
+            document.getElementById('sterilized').checked = pet.sterilized == 1;
             document.getElementById('blood_type').value = pet.blood_type || '';
             document.getElementById('allergies').value = pet.allergies || '';
             document.getElementById('medical_conditions').value = pet.medical_conditions || '';
             document.getElementById('medications').value = pet.medications || '';
             document.getElementById('special_care').value = pet.special_care || '';
-
-            // Emergency contact
+            
+            // Contacto de emergencia
             document.getElementById('veterinarian_name').value = pet.veterinarian_name || '';
             document.getElementById('veterinarian_phone').value = pet.veterinarian_phone || '';
             document.getElementById('emergency_contact').value = pet.emergency_contact || '';
             document.getElementById('emergency_phone').value = pet.emergency_phone || '';
+            
+            // QR Code
+            if (pet.qr_code) {
+                document.getElementById('qrCodeImg').src = pet.qr_code;
+            }
         }
 
         // Navegación entre tabs
@@ -616,9 +701,9 @@
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const currentPhoto = document.getElementById('currentPhoto');
-                    currentPhoto.src = e.target.result;
-                    currentPhoto.style.display = 'block';
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
@@ -626,88 +711,121 @@
 
         // Envío del formulario
         document.getElementById('editPetForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+    e.preventDefault();
+    
+    const successAlert = document.getElementById('successAlert');
+    const errorAlert = document.getElementById('errorAlert');
+    const loading = document.getElementById('loading');
+    const form = document.getElementById('editPetForm');
+    
+    // Reset alerts
+    successAlert.style.display = 'none';
+    errorAlert.style.display = 'none';
+    
+    // Crear FormData - NO uses JSON
+    const formData = new FormData(this);
+    
+    // Agregar checkbox value correctamente
+    formData.set('sterilized', document.getElementById('sterilized').checked);
+    
+    // Mostrar loading
+    form.style.display = 'none';
+    loading.style.display = 'block';
+    
+    try {
+        const response = await fetch(`/api/pets/${currentPetId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                // NO incluir Content-Type para FormData
+            },
+            body: formData // Enviar FormData directamente
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            form.style.display = 'block';
+            loading.style.display = 'none';
+            successAlert.textContent = 'Cambios guardados exitosamente';
+            successAlert.style.display = 'block';
             
-            const successAlert = document.getElementById('successAlert');
-            const errorAlert = document.getElementById('errorAlert');
-            const loading = document.getElementById('loading');
-            const form = document.getElementById('editPetForm');
+            // Recargar datos después de 2 segundos
+            setTimeout(() => {
+                loadPetData(currentPetId);
+                successAlert.style.display = 'none';
+            }, 2000);
             
-            // Reset alerts
-            successAlert.style.display = 'none';
-            errorAlert.style.display = 'none';
-            
-            // Crear FormData
-            const formData = new FormData(this);
-            
-            // Agregar checkbox de esterilización
-            formData.append('sterilized', document.getElementById('sterilized').checked);
-            
-            // Mostrar loading
-            form.style.display = 'none';
-            loading.style.display = 'block';
+        } else {
+            form.style.display = 'block';
+            loading.style.display = 'none';
+            errorAlert.textContent = result.error || 'Error al guardar cambios';
+            errorAlert.style.display = 'block';
+        }
+        
+    } catch (error) {
+        form.style.display = 'block';
+        loading.style.display = 'none';
+        console.error('Error:', error);
+        errorAlert.textContent = 'Error de conexión';
+        errorAlert.style.display = 'block';
+    }
+});
+        // Descargar QR
+        function downloadQR() {
+            if (petData && petData.qr_code) {
+                const link = document.createElement('a');
+                link.download = `qr-${petData.pet_code}.png`;
+                link.href = petData.qr_code;
+                link.click();
+            }
+        }
+
+        // Regenerar QR
+        async function regenerateQR() {
+            if (!confirm('¿Regenerar el código QR? El código anterior dejará de funcionar.')) return;
             
             try {
-                const petId = document.getElementById('petId').value;
-                
-                // Crear objeto con solo los campos que han cambiado
-                const updates = {};
-                for (let [key, value] of formData.entries()) {
-                    if (key !== 'petId' && key !== 'photo' && value !== petData[key]) {
-                        updates[key] = value;
-                    }
-                }
-
-                const response = await fetch(`/api/pets/${petId}`, {
-                    method: 'PUT',
+                const response = await fetch(`/api/pets/${currentPetId}/regenerate-qr`, {
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    },
-                    body: JSON.stringify(updates)
+                    }
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    form.style.display = 'block';
-                    loading.style.display = 'none';
-                    successAlert.textContent = '¡Información actualizada exitosamente!';
-                    successAlert.style.display = 'block';
-                    
-                    // Recargar datos
-                    await loadPetData(petId);
-                    
-                    // Scroll al inicio
-                    window.scrollTo(0, 0);
-                    
-                    // Redirigir después de 2 segundos
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 2000);
-                    
-                } else {
-                    form.style.display = 'block';
-                    loading.style.display = 'none';
-                    errorAlert.textContent = result.error || 'Error al actualizar';
-                    errorAlert.style.display = 'block';
-                    window.scrollTo(0, 0);
+                    document.getElementById('qrCodeImg').src = result.qrCode;
+                    alert('Código QR regenerado exitosamente');
                 }
-                
             } catch (error) {
-                form.style.display = 'block';
-                loading.style.display = 'none';
                 console.error('Error:', error);
-                errorAlert.textContent = 'Error de conexión';
-                errorAlert.style.display = 'block';
-                window.scrollTo(0, 0);
+                alert('Error regenerando QR');
             }
-        });
+        }
 
-        // Cancelar edición
-        function cancelEdit() {
-            if (confirm('¿Cancelar los cambios?')) {
-                window.location.href = '/dashboard';
+        // Eliminar mascota
+        async function deletePet() {
+            if (!confirm('¿Estás seguro de eliminar esta mascota? Esta acción no se puede deshacer.')) return;
+            
+            try {
+                const response = await fetch(`/api/pets/${currentPetId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Mascota eliminada exitosamente');
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error eliminando mascota');
             }
         }
     </script>
