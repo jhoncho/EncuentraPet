@@ -256,33 +256,43 @@ exports.registerScan = async (req, res) => {
 };
 
 // Obtener mascota por ID (para el dueño)
+// Obtener detalles de una mascota específica
 exports.getPetById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const petId = req.params.id;
         const userId = req.user.id;
-        
-        const pet = await getOne(
-            'SELECT * FROM pets WHERE id = ? AND user_id = ?',
-            [id, userId]
-        );
-        
+
+        // Obtener mascota
+        const pet = await getOne(`
+            SELECT 
+                p.*,
+                u.first_name as owner_first_name,
+                u.last_name as owner_last_name,
+                u.phone as owner_phone
+            FROM pets p
+            JOIN users u ON p.user_id = u.id
+            WHERE p.id = ? AND p.user_id = ?
+        `, [petId, userId]);
+
         if (!pet) {
             return res.status(404).json({
                 success: false,
                 error: 'Mascota no encontrada'
             });
         }
-        
+
+        console.log(`📋 Detalles de mascota solicitados: ${pet.name} (${pet.pet_code})`);
+
         res.json({
             success: true,
             pet
         });
-        
+
     } catch (error) {
         console.error('Error obteniendo mascota:', error);
         res.status(500).json({
             success: false,
-            error: 'Error al obtener mascota'
+            error: 'Error al obtener la mascota'
         });
     }
 };
@@ -290,98 +300,103 @@ exports.getPetById = async (req, res) => {
 // Actualizar mascota
 
 // En pet.controller.js, reemplaza el método updatePet completo:
+// Actualizar mascota
+
 exports.updatePet = async (req, res) => {
     try {
-        const { id } = req.params;
+        const petId = req.params.id;
         const userId = req.user.id;
         
+        // Extraer datos del body
+        const {
+            name, species, breed, sex, color,
+            age_years, age_months, weight,
+            microchip_code, health_card_number,
+            is_sterilized, // Del frontend viene is_sterilized
+            blood_type,
+            allergies, medical_conditions, medications,
+            special_care,
+            veterinarian_name, veterinarian_phone,
+            emergency_contact, emergency_phone
+        } = req.body;
+
+        // Convertir is_sterilized a número (0 o 1)
+        const sterilized = is_sterilized === true || is_sterilized === 'true' || is_sterilized === 1 || is_sterilized === '1' ? 1 : 0;
+
         // Verificar que la mascota pertenece al usuario
         const pet = await getOne(
-            'SELECT id, photo_url FROM pets WHERE id = ? AND user_id = ?',
-            [id, userId]
+            'SELECT id FROM pets WHERE id = ? AND user_id = ?',
+            [petId, userId]
         );
-        
+
         if (!pet) {
             return res.status(404).json({
                 success: false,
                 error: 'Mascota no encontrada'
             });
         }
-        
-        // Preparar campos para actualizar
-        const updates = {};
-        const allowedFields = [
-            'name', 'species', 'breed', 'sex', 'color',
-            'age_years', 'age_months', 'weight',
-            'microchip_code', 'health_card_number',
-            'blood_type', 'allergies', 'medical_conditions',
-            'medications', 'special_care',
-            'veterinarian_name', 'veterinarian_phone',
-            'emergency_contact', 'emergency_phone'
-        ];
-        
-        // Filtrar solo campos permitidos
-        allowedFields.forEach(field => {
-            if (req.body[field] !== undefined) {
-                updates[field] = req.body[field] || null;
-            }
-        });
-        
-        // Manejar checkbox de esterilización
-        if (req.body.sterilized !== undefined) {
-            updates.sterilized = req.body.sterilized === 'true' ? 1 : 0;
-        }
-        
-        // Si hay nueva foto
-        if (req.file) {
-            updates.photo_url = `/uploads/pet-photos/${req.file.filename}`;
-            
-            // Opcional: eliminar foto anterior
-            if (pet.photo_url) {
-                const oldPath = path.join(__dirname, '../..', pet.photo_url);
-                fs.unlink(oldPath, (err) => {
-                    if (err) console.log('No se pudo eliminar foto anterior:', err);
-                });
-            }
-        }
-        
-        // Si no hay campos para actualizar
-        if (Object.keys(updates).length === 0) {
-            return res.json({
-                success: true,
-                message: 'No hay cambios para guardar'
-            });
-        }
-        
-        // Construir query de actualización
-        const fields = Object.keys(updates).map(key => `${key} = ?`).join(', ');
-        const values = Object.values(updates);
-        values.push(id); // Agregar ID al final para el WHERE
-        
-        await runQuery(
-            `UPDATE pets SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
-            values
-        );
-        
-        console.log(`✅ Mascota ${id} actualizada por usuario ${userId}`);
-        
+
+        // Actualizar mascota - IMPORTANTE: usar sterilized (sin is_)
+        await runQuery(`
+            UPDATE pets SET
+                name = ?,
+                species = ?,
+                breed = ?,
+                sex = ?,
+                color = ?,
+                age_years = ?,
+                age_months = ?,
+                weight = ?,
+                microchip_code = ?,
+                health_card_number = ?,
+                sterilized = ?,
+                blood_type = ?,
+                allergies = ?,
+                medical_conditions = ?,
+                medications = ?,
+                special_care = ?,
+                veterinarian_name = ?,
+                veterinarian_phone = ?,
+                emergency_contact = ?,
+                emergency_phone = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ? AND user_id = ?
+        `, [
+            name, species, breed, sex, color,
+            age_years || null,
+            age_months || null,
+            weight || null,
+            microchip_code || null,
+            health_card_number || null,
+            sterilized,  // Variable convertida a 0 o 1
+            blood_type || null,
+            allergies || null,
+            medical_conditions || null,
+            medications || null,
+            special_care || null,
+            veterinarian_name || null,
+            veterinarian_phone || null,
+            emergency_contact || null,
+            emergency_phone || null,
+            petId,
+            userId
+        ]);
+
+        console.log(`✅ Mascota actualizada: ${name} (ID: ${petId})`);
+
         res.json({
             success: true,
             message: 'Mascota actualizada exitosamente'
         });
-        
+
     } catch (error) {
-        console.error('Error actualizando mascota:', error);
+        console.error('❌ Error actualizando mascota:', error);
         res.status(500).json({
             success: false,
-            error: 'Error al actualizar mascota: ' + error.message
+            error: 'Error al actualizar la mascota'
         });
     }
 };
-
-// También exporta el middleware con multer para update
-exports.uploadPhotoUpdate = upload.single('photo');
-
 
 // Eliminar mascota (soft delete)
 exports.deletePet = async (req, res) => {

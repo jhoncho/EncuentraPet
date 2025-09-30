@@ -544,9 +544,11 @@
 
         // Verificar autenticación
         document.addEventListener('DOMContentLoaded', function() {
-            const userId = localStorage.getItem('userId');
-            const userName = localStorage.getItem('userName');
-            const token = localStorage.getItem('token');
+           const token = localStorage.getItem('authToken');
+            const userStr = localStorage.getItem('user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userId = user?.id;
+            const userName = user?.firstName;
 
             if (!userId || !token) {
                 alert('Debes iniciar sesión');
@@ -570,7 +572,7 @@
             try {
                 const response = await fetch('/api/users/pets', {
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
 
@@ -629,6 +631,9 @@
                             <button class="btn-action primary" onclick="showQR('${pet.pet_code}', '${pet.name}', '${pet.qr_code}')">
                                 Ver QR
                             </button>
+                            <a href="/pet-detail?id=${pet.id}" class="btn-action primary" style="text-decoration: none;">
+                             Ver Detalle
+                             </a>
                             <button class="btn-action" onclick="editPet(${pet.id})">
                                 Editar
                             </button>
@@ -695,7 +700,7 @@
                 const response = await fetch(`/api/pets/${petId}/lost`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
 
@@ -716,7 +721,7 @@
                 const response = await fetch(`/api/pets/${petId}/found`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
 

@@ -5,6 +5,7 @@ const petController = require('../controllers/pet.controller');
 const { authenticate, optionalAuth } = require('../middlewares/auth.middleware');
 const { validatePet } = require('../middlewares/validate.middleware');
 
+
 // Rutas públicas (no requieren autenticación)
 // Obtener información pública de mascota por código
 // GET /api/pets/public/:code
@@ -38,7 +39,7 @@ router.put('/:id',
     petController.uploadPhoto,  // Agregar el middleware de upload
     petController.updatePet
 );
-
+router.get('/:id', authenticate, petController.getPetById);
 // Eliminar mascota (soft delete)
 // DELETE /api/pets/:id
 router.delete('/:id', authenticate, petController.deletePet);

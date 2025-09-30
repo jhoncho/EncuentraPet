@@ -614,7 +614,7 @@
             try {
                 const response = await fetch(`/api/pets/${petId}`, {
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
 
@@ -657,7 +657,9 @@
             // Información médica
             document.getElementById('microchip_code').value = pet.microchip_code || '';
             document.getElementById('health_card_number').value = pet.health_card_number || '';
-            document.getElementById('sterilized').checked = pet.sterilized == 1;
+            // La base de datos usa 'sterilized' (sin is_)
+            const isSterilized = pet.sterilized === 1 || pet.sterilized === '1' || pet.sterilized === true;
+            document.getElementById('petSterilized').textContent = isSterilized ? 'Sí' : 'No';
             document.getElementById('blood_type').value = pet.blood_type || '';
             document.getElementById('allergies').value = pet.allergies || '';
             document.getElementById('medical_conditions').value = pet.medical_conditions || '';
@@ -710,7 +712,8 @@
         }
 
         // Envío del formulario
-        document.getElementById('editPetForm').addEventListener('submit', async function(e) {
+// Envío del formulario
+document.getElementById('editPetForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const successAlert = document.getElementById('successAlert');
@@ -722,11 +725,29 @@
     successAlert.style.display = 'none';
     errorAlert.style.display = 'none';
     
-    // Crear FormData - NO uses JSON
-    const formData = new FormData(this);
-    
-    // Agregar checkbox value correctamente
-    formData.set('sterilized', document.getElementById('sterilized').checked);
+    // Recopilar datos del formulario como JSON
+    const formData = {
+        name: document.getElementById('name').value,
+        species: document.getElementById('species').value,
+        breed: document.getElementById('breed').value,
+        sex: document.getElementById('sex').value,
+        color: document.getElementById('color').value,
+        age_years: document.getElementById('age_years').value || null,
+        age_months: document.getElementById('age_months').value || null,
+        weight: document.getElementById('weight').value || null,
+        microchip_code: document.getElementById('microchip_code').value || null,
+        health_card_number: document.getElementById('health_card_number').value || null,
+        is_sterilized: document.getElementById('sterilized').checked ? 1 : 0, // IMPORTANTE: Cambiar nombre a is_sterilized
+        blood_type: document.getElementById('blood_type').value || null,
+        allergies: document.getElementById('allergies').value || null,
+        medical_conditions: document.getElementById('medical_conditions').value || null,
+        medications: document.getElementById('medications').value || null,
+        special_care: document.getElementById('special_care').value || null,
+        veterinarian_name: document.getElementById('veterinarian_name').value || null,
+        veterinarian_phone: document.getElementById('veterinarian_phone').value || null,
+        emergency_contact: document.getElementById('emergency_contact').value || null,
+        emergency_phone: document.getElementById('emergency_phone').value || null
+    };
     
     // Mostrar loading
     form.style.display = 'none';
@@ -736,10 +757,10 @@
         const response = await fetch(`/api/pets/${currentPetId}`, {
             method: 'PUT',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-                // NO incluir Content-Type para FormData
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken') // IMPORTANTE: Usar authToken
             },
-            body: formData // Enviar FormData directamente
+            body: JSON.stringify(formData)
         });
         
         const result = await response.json();
@@ -771,6 +792,7 @@
         errorAlert.style.display = 'block';
     }
 });
+
         // Descargar QR
         function downloadQR() {
             if (petData && petData.qr_code) {
@@ -789,7 +811,7 @@
                 const response = await fetch(`/api/pets/${currentPetId}/regenerate-qr`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
                 
@@ -813,7 +835,7 @@
                 const response = await fetch(`/api/pets/${currentPetId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
                     }
                 });
                 

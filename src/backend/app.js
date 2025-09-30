@@ -10,7 +10,7 @@ const app = express();
 
 // Configuración de seguridad con Helmet
 app.use(helmet({
-    contentSecurityPolicy: false, // Deshabilitado para permitir inline scripts
+    contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false
 }));
 
@@ -20,7 +20,7 @@ app.use(cors());
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100 // límite de 100 requests por IP
+    max: 100
 });
 app.use('/api/', limiter);
 
@@ -30,21 +30,27 @@ app.use(express.urlencoded({ extended: true }));
 
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
-// Importar rutas
+// ============================================
+// IMPORTAR RUTAS DE API
+// ============================================
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const petRoutes = require('./routes/pet.routes');
 const locationRoutes = require('./routes/location.routes');
 
-// Rutas API
+// ============================================
+// REGISTRAR RUTAS DE API
+// ============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/locations', locationRoutes);
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
-// Rutas de páginas HTML
+// ============================================
+// RUTAS DE PÁGINAS HTML (Frontend)
+// ============================================
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/index.html'));
 });
@@ -57,30 +63,35 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/login.html'));
 });
 
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html'));
+});
+
 app.get('/register-pet', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/register-pet.html'));
 });
 
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/dashboard.html'));
+app.get('/edit-pet', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/edit-pet.html'));
+});
+
+app.get('/pet-detail', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/pet-detail.html'));
 });
 
 app.get('/pet/:code', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/pet-profile.html'));
 });
 
-// Ruta para el panel de administración
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/admin/index.html'));
 });
 
+// ============================================
+// MANEJO DE ERRORES
+// ============================================
 
-// Ruta para editar mascota
-app.get('/edit-pet', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/edit-pet.html'));
-});
-
-// Manejo de errores 404
+// 404 - Ruta no encontrada
 app.use((req, res) => {
     res.status(404).json({ 
         success: false, 
@@ -88,9 +99,9 @@ app.use((req, res) => {
     });
 });
 
-// Middleware de manejo de errores global
+// Error handler global
 app.use((err, req, res, next) => {
-    console.error('Error:', err.stack);
+    console.error('❌ Error:', err.stack);
     res.status(err.status || 500).json({
         success: false,
         error: err.message || 'Error interno del servidor'
