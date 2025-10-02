@@ -434,6 +434,268 @@
                 padding: 0 1rem;
             }
         }
+        /* Modal */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal.active {
+                display: flex;
+            }
+
+            .modal-content {
+                background: white;
+                padding: 2rem;
+                border-radius: 12px;
+                max-width: 400px;
+                width: 90%;
+                text-align: center;
+            }
+
+            .qr-display {
+                margin: 2rem 0;
+            }
+
+            .qr-display img {
+                width: 250px;
+                height: 250px;
+                border: 2px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 1.5rem;
+            }
+
+            .btn-action {
+                padding: 0.75rem 1.5rem;
+                border: 2px solid #e9ecef;
+                background: white;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .btn-action:hover {
+                background: #f5f7fa;
+                border-color: #4ecdc4;
+            }
+
+            /* Modal Vacunación Responsivo */
+.vaccination-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header-vaccine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-header-vaccine h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #6c757d;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.vaccination-modal-content form {
+    padding: 1.5rem;
+}
+
+.form-group-vaccine {
+    margin-bottom: 1rem;
+}
+
+.form-group-vaccine label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.form-group-vaccine input,
+.form-group-vaccine select,
+.form-group-vaccine textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group-vaccine input:focus,
+.form-group-vaccine select:focus,
+.form-group-vaccine textarea:focus {
+    outline: none;
+    border-color: #4ecdc4;
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+}
+
+.form-group-vaccine textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-row-vaccine {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.modal-actions-vaccine {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-cancel-vaccine,
+.btn-submit-vaccine {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-cancel-vaccine {
+    background: #f8f9fa;
+    color: #495057;
+    border: 2px solid #dee2e6;
+}
+
+.btn-cancel-vaccine:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.btn-submit-vaccine {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.btn-submit-vaccine:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(78, 205, 196, 0.4);
+}
+
+/* Responsive para tablets */
+@media (max-width: 768px) {
+    .vaccination-modal-content {
+        width: 90%;
+        max-height: 85vh;
+    }
+    
+    .modal-header-vaccine {
+        padding: 1.25rem;
+    }
+    
+    .vaccination-modal-content form {
+        padding: 1.25rem;
+    }
+    
+    .form-row-vaccine {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+    .vaccination-modal-content {
+        width: 100%;
+        max-height: 95vh;
+        border-radius: 16px 16px 0 0;
+        margin-top: auto;
+    }
+    
+    .modal-header-vaccine h3 {
+        font-size: 1.1rem;
+    }
+    
+    .vaccination-modal-content form {
+        padding: 1rem;
+    }
+    
+    .form-group-vaccine {
+        margin-bottom: 0.875rem;
+    }
+    
+    .modal-actions-vaccine {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-cancel-vaccine,
+    .btn-submit-vaccine {
+        width: 100%;
+    }
+}
+
+/* Scroll suave en móviles */
+@media (max-width: 768px) {
+    .vaccination-modal-content {
+        -webkit-overflow-scrolling: touch;
+    }
+}
     </style>
 </head>
 <body>
@@ -587,6 +849,87 @@
                 </div>
             </div>
         </div>
+        <!-- QR Modal -->
+        <div class="modal" id="qrModal">
+            <div class="modal-content">
+                <h3>Código QR de <span id="modalPetName"></span></h3>
+                <div class="qr-display">
+                    <img id="modalQrImage" src="" alt="Código QR">
+                </div>
+                <p><strong>Código:</strong> <span id="modalPetCode"></span></p>
+                <div class="modal-actions">
+                    <button class="btn-action" onclick="downloadQR()">📥 Descargar</button>
+                    <button class="btn-action" onclick="printQR()">🖨️ Imprimir</button>
+                    <button class="btn-action" onclick="closeModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Agregar Vacuna Responsivo -->
+<div class="modal" id="vaccinationModal">
+    <div class="vaccination-modal-content">
+        <div class="modal-header-vaccine">
+            <h3>Agregar Vacunación</h3>
+            <button class="close-btn" onclick="closeVaccinationModal()">&times;</button>
+        </div>
+        
+        <form id="vaccinationForm">
+            <div class="form-group-vaccine">
+                <label for="vaccineId">Vacuna <span style="color: #ff6b6b;">*</span></label>
+                <select id="vaccineId" required>
+                    <option value="">Selecciona una vacuna</option>
+                </select>
+            </div>
+
+            <div class="form-row-vaccine">
+                <div class="form-group-vaccine">
+                    <label for="vaccinationDate">Fecha <span style="color: #ff6b6b;">*</span></label>
+                    <input type="date" id="vaccinationDate" required>
+                </div>
+                <div class="form-group-vaccine">
+                    <label for="nextDoseDate">Próxima Dosis</label>
+                    <input type="date" id="nextDoseDate">
+                </div>
+            </div>
+
+            <div class="form-row-vaccine">
+                <div class="form-group-vaccine">
+                    <label for="doseNumber">Nº Dosis</label>
+                    <input type="number" id="doseNumber" min="1" value="1">
+                </div>
+                <div class="form-group-vaccine">
+                    <label for="batchNumber">Nº Lote</label>
+                    <input type="text" id="batchNumber">
+                </div>
+            </div>
+
+            <div class="form-group-vaccine">
+                <label for="vetNameVaccine">Veterinario <span style="color: #ff6b6b;">*</span></label>
+                <input type="text" id="vetNameVaccine" required>
+            </div>
+
+            <div class="form-group-vaccine">
+                <label for="clinicName">Clínica/Veterinaria</label>
+                <input type="text" id="clinicName">
+            </div>
+
+            <div class="form-group-vaccine">
+                <label for="vaccinationNotes">Notas</label>
+                <textarea id="vaccinationNotes" rows="3"></textarea>
+            </div>
+
+            <div class="modal-actions-vaccine">
+                <button type="button" class="btn-cancel-vaccine" onclick="closeVaccinationModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-submit-vaccine">
+                    Guardar Vacuna
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+      
+
     </main>
 
     <script>
@@ -734,14 +1077,31 @@
             vaccinationList.innerHTML = '<p class="empty-text">No hay vacunas registradas</p>';
         }
 
-        // Ver QR en grande
+       // Mostrar QR en modal
+        function showQR(petCode, petName, qrCode) {
+            currentQR = qrCode;
+            currentPetCode = petCode;
+            
+            document.getElementById('modalPetName').textContent = petName;
+            document.getElementById('modalPetCode').textContent = petCode;
+            document.getElementById('modalQrImage').src = qrCode;
+            document.getElementById('qrModal').classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        // Ver QR en modal
         function viewQR() {
             if (currentPet && currentPet.qr_code) {
-                window.open(currentPet.qr_code, '_blank');
+                showQR(currentPet.pet_code, currentPet.name, currentPet.qr_code);
             }
         }
 
-        // Descargar QR
+
+  // Descargar QR
         function downloadQR() {
             if (!currentPet || !currentPet.qr_code) return;
             
@@ -750,8 +1110,217 @@
             link.href = currentPet.qr_code;
             link.click();
         }
+// Imprimir QR
 
-        // Regenerar QR
+// Imprimir QR optimizado para placa de mascota
+function printQR() {
+    if (!currentPet || !currentPet.qr_code) return;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>QR - ${currentPet.name}</title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+                
+                body {
+                    font-family: Arial, sans-serif;
+                    background: white;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    padding: 20px;
+                }
+                
+                .print-container {
+                    text-align: center;
+                }
+                
+                /* Contenedor de placas múltiples */
+                .tags-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 30px;
+                    margin: 20px auto;
+                    max-width: 700px;
+                }
+                
+                /* Estilo de placa individual */
+                .pet-tag {
+                    width: 150px;
+                    border: 2px dashed #ccc;
+                    border-radius: 12px;
+                    padding: 15px;
+                    background: white;
+                    page-break-inside: avoid;
+                }
+                
+                .pet-tag h2 {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                    color: #333;
+                }
+                
+                .pet-tag img {
+                    width: 130px;
+                    height: 130px;
+                    border: 3px solid #333;
+                    border-radius: 8px;
+                    padding: 8px;
+                    background: white;
+                    display: block;
+                    margin: 0 auto 10px;
+                }
+                
+                .pet-info {
+                    font-size: 12px;
+                    color: #666;
+                    margin: 8px 0;
+                }
+                
+                .pet-code {
+                    font-family: monospace;
+                    font-size: 11px;
+                    font-weight: bold;
+                    color: #333;
+                    margin: 8px 0;
+                    padding: 5px;
+                    background: #f0f0f0;
+                    border-radius: 4px;
+                }
+                
+                .instructions {
+                    font-size: 11px;
+                    color: #666;
+                    margin-top: 8px;
+                    padding: 8px;
+                    background: #fff3cd;
+                    border-radius: 4px;
+                    border: 1px solid #ffc107;
+                }
+                
+                .brand {
+                    font-size: 10px;
+                    color: #999;
+                    margin-top: 10px;
+                }
+                
+                /* Instrucciones de corte */
+                .cut-instructions {
+                    text-align: center;
+                    margin: 20px 0;
+                    padding: 15px;
+                    background: #e7f5ff;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    color: #0c5460;
+                }
+                
+                .no-print {
+                    margin: 20px 0;
+                }
+                
+                .print-button {
+                    background: #4ecdc4;
+                    color: white;
+                    border: none;
+                    padding: 12px 30px;
+                    font-size: 16px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    margin: 0 10px;
+                }
+                
+                .print-button:hover {
+                    background: #44a08d;
+                }
+                
+                @media print {
+                    body {
+                        padding: 10mm;
+                    }
+                    
+                    .no-print {
+                        display: none !important;
+                    }
+                    
+                    .pet-tag {
+                        border: 2px dashed #999;
+                    }
+                    
+                    .cut-instructions {
+                        border: 1px solid #999;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-container">
+                <div class="no-print cut-instructions">
+                    <strong>Instrucciones:</strong> Recorta siguiendo las líneas punteadas. 
+                    Lamina la placa para mayor durabilidad.
+                </div>
+                
+                <div class="no-print" style="margin-bottom: 20px;">
+                    <button class="print-button" onclick="window.print()">🖨️ Imprimir</button>
+                    <button class="print-button" onclick="window.close()" style="background: #6c757d;">Cerrar</button>
+                </div>
+                
+                <!-- Grid de 4 copias de la placa -->
+                <div class="tags-grid">
+                    ${Array(4).fill().map(() => `
+                        <div class="pet-tag">
+                            <h2>${currentPet.name}</h2>
+                            <img src="${currentPet.qr_code}" alt="Código QR">
+                            <div class="pet-info">
+                                <strong>${currentPet.species}</strong>
+                                ${currentPet.breed ? `<br>${currentPet.breed}` : ''}
+                            </div>
+                            <div class="pet-code">${currentPet.pet_code}</div>
+                            <div class="instructions">
+                                Escanea para contactar al dueño
+                            </div>
+                            <div class="brand">EncuentraPet.com</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="no-print" style="margin-top: 20px; font-size: 12px; color: #666;">
+                    <p><strong>Recomendaciones:</strong></p>
+                    <p>• Imprime en papel fotográfico o adhesivo</p>
+                    <p>• Lamina para proteger de agua y rasguños</p>
+                    <p>• Usa un protector plástico en el collar</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Auto-imprimir después de cargar
+    printWindow.onload = function() {
+        setTimeout(() => {
+            printWindow.focus();
+        }, 250);
+    };
+}
+
+
+  // Regenerar QR
         async function regenerateQR() {
             if (!confirm('¿Regenerar el código QR? El anterior dejará de funcionar.')) return;
 
@@ -843,10 +1412,185 @@
         }
 
         // Agregar vacuna
-        function addVaccination() {
-            // TODO: Implementar modal para agregar vacuna
-            alert('Función de agregar vacuna en desarrollo');
+        // Cargar vacunas disponibles
+async function loadAvailableVaccines() {
+    try {
+        // Obtener la especie de la mascota actual
+        const species = currentPet.species;
+        
+        // Aquí deberías tener un endpoint para obtener vacunas por especie
+        // Por ahora usaremos vacunas predefinidas
+        const vaccines = getVaccinesBySpecies(species);
+        
+        const select = document.getElementById('vaccineId');
+        select.innerHTML = '<option value="">Selecciona una vacuna</option>';
+        
+        vaccines.forEach(vaccine => {
+            const option = document.createElement('option');
+            option.value = vaccine.id;
+            option.textContent = vaccine.name;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error cargando vacunas:', error);
+    }
+}
+
+// Vacunas predefinidas por especie
+function getVaccinesBySpecies(species) {
+    const vaccinesBySpecies = {
+        'Perro': [
+            { id: 1, name: 'Antirrábica' },
+            { id: 2, name: 'Parvovirus' },
+            { id: 3, name: 'Moquillo' },
+            { id: 4, name: 'Hepatitis' },
+            { id: 5, name: 'Leptospirosis' },
+            { id: 6, name: 'Parainfluenza' },
+            { id: 7, name: 'Coronavirus' },
+            { id: 8, name: 'Bordetella' },
+            { id: 9, name: 'Séxtuple' },
+            { id: 10, name: 'Óctuple' }
+        ],
+        'Gato': [
+            { id: 11, name: 'Antirrábica' },
+            { id: 12, name: 'Triple Felina' },
+            { id: 13, name: 'Leucemia Felina' },
+            { id: 14, name: 'Peritonitis Infecciosa' },
+            { id: 15, name: 'Clamidia' }
+        ],
+        'Conejo': [
+            { id: 16, name: 'Mixomatosis' },
+            { id: 17, name: 'Enfermedad Hemorrágica Viral' }
+        ],
+        'Ave': [
+            { id: 18, name: 'Newcastle' },
+            { id: 19, name: 'Viruela Aviar' }
+        ]
+    };
+    
+    return vaccinesBySpecies[species] || [];
+}
+
+// Mostrar modal de vacunación
+async function addVaccination() {
+    if (!currentPet) return;
+    
+    await loadAvailableVaccines();
+    
+    // Pre-llenar veterinario si existe
+    if (currentPet.veterinarian_name) {
+        document.getElementById('vetNameVaccine').value = currentPet.veterinarian_name;
+    }
+    
+    // Establecer fecha actual
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('vaccinationDate').value = today;
+    
+    document.getElementById('vaccinationModal').classList.add('active');
+}
+
+// Cerrar modal de vacunación
+function closeVaccinationModal() {
+    document.getElementById('vaccinationModal').classList.remove('active');
+    document.getElementById('vaccinationForm').reset();
+}
+
+// Enviar formulario de vacunación
+document.addEventListener('DOMContentLoaded', function() {
+    const vaccinationForm = document.getElementById('vaccinationForm');
+    if (vaccinationForm) {
+        vaccinationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                vaccine_id: document.getElementById('vaccineId').value,
+                vaccination_date: document.getElementById('vaccinationDate').value,
+                next_dose_date: document.getElementById('nextDoseDate').value || null,
+                dose_number: document.getElementById('doseNumber').value || 1,
+                batch_number: document.getElementById('batchNumber').value || null,
+                veterinarian_name: document.getElementById('vetNameVaccine').value,
+                clinic_name: document.getElementById('clinicName').value || null,
+                notes: document.getElementById('vaccinationNotes').value || null
+            };
+            
+            try {
+                const response = await fetch(`/api/pets/${petId}/vaccination`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Vacuna registrada exitosamente');
+                    closeVaccinationModal();
+                    await loadVaccinations(); // Recargar lista de vacunas
+                } else {
+                    alert('Error: ' + (result.error || 'No se pudo registrar la vacuna'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión al registrar la vacuna');
+            }
+        });
+    }
+});
+
+// Actualizar función loadVaccinations para mostrar las vacunas
+async function loadVaccinations() {
+    try {
+        const response = await fetch(`/api/pets/${petId}/vaccinations`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.vaccinations && data.vaccinations.length > 0) {
+            const vaccinationList = document.getElementById('vaccinationList');
+            vaccinationList.innerHTML = data.vaccinations.map(vacc => `
+                <div class="vaccination-item">
+                    <div class="vaccination-name">${vacc.vaccine_name || 'Vacuna'}</div>
+                    <div class="vaccination-date">
+                        Fecha: ${new Date(vacc.vaccination_date).toLocaleDateString('es-BO')}
+                        ${vacc.next_dose_date ? `<br>Próxima dosis: ${new Date(vacc.next_dose_date).toLocaleDateString('es-BO')}` : ''}
+                        <br>Veterinario: ${vacc.veterinarian_name}
+                        ${vacc.clinic_name ? `<br>Clínica: ${vacc.clinic_name}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            const vaccinationList = document.getElementById('vaccinationList');
+            vaccinationList.innerHTML = '<p class="empty-text">No hay vacunas registradas</p>';
         }
+    } catch (error) {
+        console.error('Error cargando vacunas:', error);
+    }
+}
+
+        let currentQR = null;
+        let currentPetCode = null;
+
+        // Cerrar modal con click fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('qrModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+        });     
+
+// Cerrar modal de vacunación al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const vaccinationModal = document.getElementById('vaccinationModal');
+            if (e.target === vaccinationModal) {
+                closeVaccinationModal();
+            }
+        });
     </script>
 </body>
 </html>

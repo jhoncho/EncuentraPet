@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - EncuentraPet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover {
+            color: #495057;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group label span.required {
+            color: #ff6b6b;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            flex: 1;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .success-alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-alert {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4ecdc4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #e7f5ff;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">👤</div>
+            <h1>Mi Perfil</h1>
+            <p>Gestiona tu información personal</p>
+        </div>
+
+        <div class="content">
+            <!-- Navigation -->
+            <div class="nav-links">
+                <a href="/dashboard" class="back-link">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+
+            <!-- Alerts -->
+            <div class="success-alert" id="successAlert"></div>
+            <div class="error-alert" id="errorAlert"></div>
+
+            <div class="info-box">
+                ℹ️ Esta información se mostrará cuando alguien escanee el código QR de tus mascotas
+            </div>
+
+            <form id="profileForm">
+                <!-- Información Personal -->
+                <div class="form-section">
+                    <h2>👤 Información Personal</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Nombre <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Apellido <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="form-section">
+                    <h2>📞 Información de Contacto</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Teléfono <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+591 70000000">
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp</label>
+                            <input type="tel" id="whatsapp" name="whatsapp" placeholder="+591 70000000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dirección -->
+                <div class="form-section">
+                    <h2>📍 Dirección</h2>
+                    
+                    <div class="form-group">
+                        <label for="address">Dirección</label>
+                        <input type="text" id="address" name="address" placeholder="Calle, número">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">Ciudad <span class="required">*</span></label>
+                            <select id="city" name="city" required>
+                                <option value="">Selecciona</option>
+                                <option value="La Paz">La Paz</option>
+                                <option value="El Alto">El Alto</option>
+                                <option value="Santa Cruz">Santa Cruz</option>
+                                <option value="Cochabamba">Cochabamba</option>
+                                <option value="Oruro">Oruro</option>
+                                <option value="Potosí">Potosí</option>
+                                <option value="Tarija">Tarija</option>
+                                <option value="Sucre">Sucre</option>
+                                <option value="Trinidad">Trinidad</option>
+                                <option value="Cobija">Cobija</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Departamento <span class="required">*</span></label>
+                            <select id="department" name="department" required>
+                                <option value="">Selecciona</option>
+                                <option value="La Paz">La Paz</option>
+                                <option value="Santa Cruz">Santa Cruz</option>
+                                <option value="Cochabamba">Cochabamba</option>
+                                <option value="Oruro">Oruro</option>
+                                <option value="Potosí">Potosí</option>
+                                <option value="Tarija">Tarija</option>
+                                <option value="Chuquisaca">Chuquisaca</option>
+                                <option value="Beni">Beni</option>
+                                <option value="Pando">Pando</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/dashboard'">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Guardando cambios...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar datos del usuario al inicio
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Debes iniciar sesión');
+                window.location.href = '/login';
+                return;
+            }
+
+            await loadUserProfile();
+        });
+
+        // Cargar perfil del usuario
+        async function loadUserProfile() {
+            try {
+                const response = await fetch('/api/users/profile', {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    populateForm(data.user);
+                } else {
+                    showError('Error cargando perfil');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        // Llenar formulario con datos
+        function populateForm(user) {
+            document.getElementById('firstName').value = user.first_name || '';
+            document.getElementById('lastName').value = user.last_name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('whatsapp').value = user.whatsapp || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('city').value = user.city || '';
+            document.getElementById('department').value = user.department || '';
+        }
+
+        // Enviar formulario
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const loading = document.getElementById('loading');
+            const form = document.getElementById('profileForm');
+            
+            // Reset alerts
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                whatsapp: document.getElementById('whatsapp').value || null,
+                address: document.getElementById('address').value || null,
+                city: document.getElementById('city').value,
+                department: document.getElementById('department').value
+            };
+            
+            // Mostrar loading
+            form.style.display = 'none';
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    form.style.display = 'block';
+                    loading.style.display = 'none';
+                    successAlert.textContent = 'Perfil actualizado exitosamente';
+                    successAlert.style.display = 'block';
+                    
+                    // Actualizar localStorage
+                    localStorage.setItem('userName', formData.firstName);
+                    
+                    setTimeout(() => {
+                        successAlert.style.display = 'none';
+                    }, 3000);
+                    
+                } else {
+                    form.style.display = 'block';
+                    loading.style.display = 'none';
+                    showError(result.error || 'Error al actualizar perfil');
+                }
+                
+            } catch (error) {
+                form.style.display = 'block';
+                loading.style.display = 'none';
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        });
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.textContent = message;
+            errorAlert.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

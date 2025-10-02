@@ -87,6 +87,10 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/admin/index.html'));
 });
 
+app.get('/user-profile', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/user-profile.html'));
+});
+
 // ============================================
 // MANEJO DE ERRORES
 // ============================================

@@ -413,15 +413,26 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="password">Contraseña <span class="required">*</span></label>
-                            <input type="password" id="password" name="password" required minlength="8">
-                            <div class="password-strength" id="passwordStrength"></div>
-                            <div class="error-message">La contraseña debe tener al menos 8 caracteres</div>
+                            <label for="password">Contraseña</label>
+                            <div style="position: relative;">
+                                <input type="password" id="password" name="password" required>
+                                <button type="button" onclick="togglePassword('password', this)" 
+                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                                            background: none; border: none; cursor: pointer; color: #666; font-size: 12px;">
+                                    Mostrar
+                                </button>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="confirmPassword">Confirmar Contraseña <span class="required">*</span></label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                            <div class="error-message">Las contraseñas no coinciden</div>
+                            <label for="confirmPassword">Confirmar Contraseña</label>
+                            <div style="position: relative;">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                                <button type="button" onclick="togglePassword('confirmPassword', this)" 
+                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                                            background: none; border: none; cursor: pointer; color: #666; font-size: 12px;">
+                                    Mostrar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -653,6 +664,17 @@
                 window.scrollTo(0, 0);
             }
         });
+
+        function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = 'Ocultar';
+    } else {
+        input.type = 'password';
+        button.textContent = 'Mostrar';
+    }
+}
     </script>
 </body>
 </html>

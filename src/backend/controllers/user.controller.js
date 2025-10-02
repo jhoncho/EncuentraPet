@@ -5,17 +5,97 @@ const bcrypt = require('bcryptjs');
 exports.getProfile = async (req, res) => {
     try {
         const user = await getOne(
-            'SELECT id, email, first_name, last_name, phone, city, department FROM users WHERE id = ?',
+            'SELECT id, email, first_name, last_name, phone, whatsapp, address, city, department FROM users WHERE id = ?',
             [req.user.id]
         );
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Usuario no encontrado' 
+            });
+        }
+        
         res.json({ success: true, user });
     } catch (error) {
-        res.status(500).json({ success: false, error: 'Error obteniendo perfil' });
+        console.error('Error obteniendo perfil:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Error obteniendo perfil' 
+        });
     }
 };
 
 exports.updateProfile = async (req, res) => {
-    res.json({ success: true, message: 'TODO: Implementar' });
+    try {
+        const { firstName, lastName, email, phone, whatsapp, address, city, department } = req.body;
+        
+        // Validaciones básicas
+        if (!firstName || !lastName || !email || !phone || !city || !department) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Faltan campos requeridos' 
+            });
+        }
+
+        // Verificar si el email ya existe (si cambió)
+        const existingUser = await getOne(
+            'SELECT id FROM users WHERE email = ? AND id != ?',
+            [email, req.user.id]
+        );
+
+        if (existingUser) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'El email ya está en uso por otro usuario' 
+            });
+        }
+
+        // Actualizar perfil
+        await runQuery(`
+            UPDATE users 
+            SET 
+                first_name = ?,
+                last_name = ?,
+                email = ?,
+                phone = ?,
+                whatsapp = ?,
+                address = ?,
+                city = ?,
+                department = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `, [
+            firstName,
+            lastName,
+            email,
+            phone,
+            whatsapp || null,
+            address || null,
+            city,
+            department,
+            req.user.id
+        ]);
+
+        // Obtener datos actualizados
+        const updatedUser = await getOne(
+            'SELECT id, email, first_name, last_name, phone, whatsapp, address, city, department FROM users WHERE id = ?',
+            [req.user.id]
+        );
+
+        res.json({ 
+            success: true, 
+            message: 'Perfil actualizado correctamente',
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error('Error actualizando perfil:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Error al actualizar el perfil' 
+        });
+    }
 };
 
 exports.changePassword = async (req, res) => {

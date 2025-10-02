@@ -431,23 +431,29 @@
                         <input type="text" id="name" name="name" required placeholder="Ej: Max, Luna, Rocky">
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="species">Especie <span class="required">*</span></label>
-                            <select id="species" name="species" required>
-                                <option value="">Selecciona</option>
-                                <option value="Perro">🐕 Perro</option>
-                                <option value="Gato">🐈 Gato</option>
-                                <option value="Conejo">🐰 Conejo</option>
-                                <option value="Ave">🦜 Ave</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="breed">Raza</label>
-                            <input type="text" id="breed" name="breed" placeholder="Ej: Golden Retriever">
-                        </div>
+                   <div class="form-row">
+                    <div class="form-group">
+                        <label for="species">Especie <span class="required">*</span></label>
+                        <select id="species" name="species" required onchange="handleSpeciesChange()">
+                            <option value="">Selecciona</option>
+                            <option value="Perro">🐕 Perro</option>
+                            <option value="Gato">🐈 Gato</option>
+                            <option value="Conejo">🐰 Conejo</option>
+                            <option value="Ave">🦜 Ave</option>
+                            <option value="Otro">Otro</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label for="breed" id="breedLabel">Raza</label>
+                        <select id="breedSelect" name="breed" style="display: none;">
+                            <option value="">Selecciona una especie primero</option>
+                        </select>
+                        <input type="text" id="breedDisabled" disabled placeholder="Selecciona una especie primero" 
+                            style="display: block; background: #e9ecef; cursor: not-allowed;">
+                        <input type="text" id="otherSpeciesInput" name="otherSpecies" style="display: none;" 
+                            placeholder="¿Qué tipo de animal es?">
+                    </div>
+                </div>
 
                     <div class="form-row">
                         <div class="form-group">
@@ -753,6 +759,19 @@ document.getElementById('petForm').addEventListener('submit', async function(e) 
     
     // Agregar user_id
     formData.append('user_id', localStorage.getItem('userId'));
+
+        // Manejar el campo de raza según la especie
+    const species = document.getElementById('species').value;
+    if (species === 'Otro') {
+        // Guardar el tipo de animal en breed
+        formData.set('breed', document.getElementById('otherSpeciesInput').value);
+    } else if (species === 'Conejo' || species === 'Ave') {
+        // No enviar raza para conejo y ave
+        formData.delete('breed');
+    } else {
+        // Perro o Gato - enviar la raza seleccionada
+        formData.set('breed', document.getElementById('breedSelect').value);
+}
     
     // Agregar checkboxes
     formData.append('sterilized', document.getElementById('sterilized').checked);
@@ -817,6 +836,119 @@ document.getElementById('petForm').addEventListener('submit', async function(e) 
             // Recargar la página para limpiar el formulario
             window.location.reload();
         }
+
+        // Razas de perros y gatos
+const dogBreeds = [
+    "Mestizo/Criollo",
+    "Labrador Retriever",
+    "Pastor Alemán",
+    "Golden Retriever",
+    "Bulldog Francés",
+    "Bulldog Inglés",
+    "Beagle",
+    "Poodle/Caniche",
+    "Rottweiler",
+    "Yorkshire Terrier",
+    "Boxer",
+    "Dachshund/Salchicha",
+    "Shih Tzu",
+    "Chihuahua",
+    "Husky Siberiano",
+    "Pug/Carlino",
+    "Cocker Spaniel",
+    "Border Collie",
+    "Schnauzer",
+    "Doberman",
+    "Gran Danés",
+    "Pitbull",
+    "Maltés",
+    "Bichon Frisé",
+    "San Bernardo",
+    "Akita",
+    "Dálmata",
+    "Shiba Inu",
+    "Corgi",
+    "Jack Russell Terrier"
+].sort();
+
+const catBreeds = [
+    "Mestizo/Criollo",
+    "Persa",
+    "Siamés",
+    "Maine Coon",
+    "Ragdoll",
+    "British Shorthair",
+    "Bengalí",
+    "Abisinio",
+    "Scottish Fold",
+    "Sphynx/Esfinge",
+    "Angora Turco",
+    "Birmano",
+    "Exótico de Pelo Corto",
+    "Bosque de Noruega",
+    "Sagrado de Birmania",
+    "Azul Ruso",
+    "Munchkin",
+    "Himalayo"
+].sort();
+
+function handleSpeciesChange() {
+    const species = document.getElementById('species').value;
+    const breedSelect = document.getElementById('breedSelect');
+    const breedDisabled = document.getElementById('breedDisabled');
+    const otherSpeciesInput = document.getElementById('otherSpeciesInput');
+    const breedLabel = document.getElementById('breedLabel');
+    
+    // Ocultar todos los campos
+    breedSelect.style.display = 'none';
+    breedDisabled.style.display = 'none';
+    otherSpeciesInput.style.display = 'none';
+    
+    // Limpiar valores
+    breedSelect.value = '';
+    otherSpeciesInput.value = '';
+    
+    if (species === 'Perro') {
+        // Mostrar select con razas de perros
+        breedLabel.textContent = 'Raza';
+        breedSelect.style.display = 'block';
+        breedSelect.innerHTML = '<option value="">Selecciona una raza</option>' +
+            dogBreeds.map(breed => `<option value="${breed}">${breed}</option>`).join('');
+        breedSelect.required = false;
+        
+    } else if (species === 'Gato') {
+        // Mostrar select con razas de gatos
+        breedLabel.textContent = 'Raza';
+        breedSelect.style.display = 'block';
+        breedSelect.innerHTML = '<option value="">Selecciona una raza</option>' +
+            catBreeds.map(breed => `<option value="${breed}">${breed}</option>`).join('');
+        breedSelect.required = false;
+        
+    } else if (species === 'Conejo' || species === 'Ave') {
+        // Bloquear campo para Conejo y Ave
+        breedLabel.textContent = 'Raza';
+        breedDisabled.style.display = 'block';
+        breedDisabled.placeholder = 'No aplicable para ' + species.toLowerCase();
+        breedSelect.removeAttribute('name'); // No enviar este campo
+        
+    } else if (species === 'Otro') {
+        // Mostrar campo de texto para especificar
+        breedLabel.textContent = 'Tipo de Animal';
+        otherSpeciesInput.style.display = 'block';
+        otherSpeciesInput.required = true;
+        breedSelect.removeAttribute('name'); // No enviar el select
+        
+    } else {
+        // Sin especie seleccionada
+        breedDisabled.style.display = 'block';
+        breedDisabled.placeholder = 'Selecciona una especie primero';
+    }
+}
+
+// Llamar al cargar la página por si hay datos precargados
+document.addEventListener('DOMContentLoaded', function() {
+    handleSpeciesChange();
+});
     </script>
 </body>
 </html>

@@ -655,11 +655,12 @@
             }
             
             // Información médica
+           // Información médica
             document.getElementById('microchip_code').value = pet.microchip_code || '';
             document.getElementById('health_card_number').value = pet.health_card_number || '';
             // La base de datos usa 'sterilized' (sin is_)
             const isSterilized = pet.sterilized === 1 || pet.sterilized === '1' || pet.sterilized === true;
-            document.getElementById('petSterilized').textContent = isSterilized ? 'Sí' : 'No';
+            document.getElementById('sterilized').checked = isSterilized; 
             document.getElementById('blood_type').value = pet.blood_type || '';
             document.getElementById('allergies').value = pet.allergies || '';
             document.getElementById('medical_conditions').value = pet.medical_conditions || '';

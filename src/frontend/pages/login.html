@@ -179,9 +179,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
+    <label for="password">Contraseña</label>
+    <div style="position: relative;">
+        <input type="password" id="password" name="password" required>
+        <button type="button" onclick="togglePassword('password', this)" 
+                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                       background: none; border: none; cursor: pointer; color: #666; font-size: 12px;">
+            Mostrar
+        </button>
+    </div>
+</div>
 
                 <button type="submit" class="login-btn" id="loginBtn">
                     Iniciar Sesión
@@ -294,6 +301,17 @@
                 showLoading(false);
             }
         });
+// Función para mostrar/ocultar contraseña
+function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = 'Ocultar';
+    } else {
+        input.type = 'password';
+        button.textContent = 'Mostrar';
+    }
+}
     </script>
 </body>
 </html>
