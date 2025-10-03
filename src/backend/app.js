@@ -28,7 +28,7 @@ app.use('/api/', limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos
+// Servir archivos estáticos (SOLO UNA VEZ)
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
@@ -41,7 +41,7 @@ const petRoutes = require('./routes/pet.routes');
 const locationRoutes = require('./routes/location.routes');
 
 // ============================================
-// REGISTRAR RUTAS DE API
+// REGISTRAR RUTAS DE API (ANTES DE LAS RUTAS HTML)
 // ============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -79,16 +79,18 @@ app.get('/pet-detail', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/pet-detail.html'));
 });
 
-app.get('/pet/:code', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/pet-profile.html'));
+app.get('/user-profile', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/user-profile.html'));
 });
 
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/pages/admin/index.html'));
 });
 
-app.get('/user-profile', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/pages/user-profile.html'));
+// IMPORTANTE: Esta ruta debe ir AL FINAL de las rutas HTML
+// para que no capture las rutas anteriores como /pet-detail
+app.get('/pet/:code', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/pages/pet-profile.html'));
 });
 
 // ============================================

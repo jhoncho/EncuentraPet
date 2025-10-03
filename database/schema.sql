@@ -303,3 +303,28 @@ JOIN vaccines v ON vr.vaccine_id = v.id
 WHERE vr.next_dose_date <= date('now', '+30 days')
 AND vr.next_dose_date >= date('now')
 ORDER BY vr.next_dose_date;
+
+ALTER TABLE location_reports 
+ADD COLUMN photo_url TEXT AFTER message;
+
+CREATE TABLE IF NOT EXISTS location_reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pet_id INTEGER NOT NULL,
+    latitude REAL,
+    longitude REAL,
+    accuracy REAL,
+    finder_name TEXT,
+    finder_phone TEXT,
+    finder_email TEXT,
+    message TEXT,
+    reported_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pet_id) REFERENCES pets(id)
+);
+
+CREATE TABLE IF NOT EXISTS location_photos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location_report_id INTEGER NOT NULL,
+    photo_url TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_report_id) REFERENCES location_reports(id)
+);

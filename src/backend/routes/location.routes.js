@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const locationController = require('../controllers/location.controller');
-const { authenticate, optionalAuth } = require('../middlewares/auth.middleware');
+const { authenticate } = require('../middlewares/auth.middleware');
 
 // Rutas públicas (para quien encuentra la mascota)
 // Reportar mascota encontrada
 // POST /api/locations/report
-router.post('/report', locationController.reportFoundPet);
+router.post('/report', locationController.uploadLocationPhotos, locationController.reportFoundPet);
 
 // Obtener ubicaciones de una mascota (requiere autenticación)
 // GET /api/locations/pet/:petId
