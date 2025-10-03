@@ -130,9 +130,20 @@ exports.getUserStats = async (req, res) => {
             WHERE p.user_id = ? AND p.is_active = 1
         `, [req.user.id]);
         
-        res.json({ success: true, stats });
+        res.json({ 
+            success: true, 
+            stats: {
+                total_pets: stats.total_pets || 0,
+                lost_pets: stats.lost_pets || 0,
+                total_scans: stats.total_scans || 0
+            }
+        });
     } catch (error) {
-        res.status(500).json({ success: false, error: 'Error obteniendo estadísticas' });
+        console.error('Error obteniendo estadísticas:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Error obteniendo estadísticas' 
+        });
     }
 };
 

@@ -64,4 +64,8 @@ router.get('/:id/vaccinations', authenticate, petController.getVaccinations);
 // POST /api/pets/:id/regenerate-qr
 router.post('/:id/regenerate-qr', authenticate, petController.regenerateQR);
 
+// Obtener estadísticas de escaneos de una mascota
+// GET /api/pets/:id/scans
+router.get('/:id/scans', authenticate, petController.getPetScans);
+
 module.exports = router;

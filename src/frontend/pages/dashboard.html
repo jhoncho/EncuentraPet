@@ -593,64 +593,127 @@
         }
 
         // Mostrar mascotas
-        function displayPets(pets) {
-            const loadingState = document.getElementById('loadingState');
-            const petsGrid = document.getElementById('petsGrid');
-            const emptyState = document.getElementById('emptyState');
+   // Mostrar mascotas
+function displayPets(pets) {
+    const loadingState = document.getElementById('loadingState');
+    const petsGrid = document.getElementById('petsGrid');
+    const emptyState = document.getElementById('emptyState');
 
-            loadingState.style.display = 'none';
+    loadingState.style.display = 'none';
 
-            if (!pets || pets.length === 0) {
-                emptyState.style.display = 'block';
-                petsGrid.style.display = 'none';
-                return;
-            }
+    if (!pets || pets.length === 0) {
+        emptyState.style.display = 'block';
+        petsGrid.style.display = 'none';
+        return;
+    }
 
-            emptyState.style.display = 'none';
-            petsGrid.style.display = 'grid';
+    emptyState.style.display = 'none';
+    petsGrid.style.display = 'grid';
 
-            petsGrid.innerHTML = pets.map(pet => `
-                <div class="pet-card">
-                    <div class="pet-photo">
-                        ${pet.photo_url ? 
-                            `<img src="${pet.photo_url}" alt="${pet.name}" style="width:100%; height:100%; object-fit:cover;">` : 
-                            getPetEmoji(pet.species)
-                        }
-                        <span class="pet-status ${pet.is_lost ? 'status-lost' : 'status-safe'}">
-                            ${pet.is_lost ? '⚠️ Perdida' : '✓ Segura'}
-                        </span>
-                    </div>
-                    <div class="pet-info">
-                        <h3 class="pet-name">${pet.name}</h3>
-                        <p class="pet-details">
-                            ${pet.species} ${pet.breed ? `• ${pet.breed}` : ''}<br>
-                            ${pet.sex} • ${pet.color}<br>
-                            ${pet.age_years ? `${pet.age_years} años` : ''} ${pet.age_months ? `${pet.age_months} meses` : ''}
-                        </p>
-                        <div class="pet-code">
-                            ${pet.pet_code}
-                        </div>
-                        <div class="pet-actions">
-                            <button class="btn-action primary" onclick="showQR('${pet.pet_code}', '${pet.name}', '${pet.qr_code}')">
-                                Ver QR
-                            </button>
-                            <a href="/pet-detail?id=${pet.id}" class="btn-action primary" style="text-decoration: none;">
-                             Ver Detalle
-                             </a>
-                            <button class="btn-action" onclick="editPet(${pet.id})">
-                                Editar
-                            </button>
-                            ${pet.is_lost ? 
-                                `<button class="btn-action" onclick="markFound(${pet.id})">Encontrada</button>` :
-                                `<button class="btn-action" onclick="markLost(${pet.id})">Perdida</button>`
-                            }
-                        </div>
-                    </div>
+    petsGrid.innerHTML = pets.map(pet => `
+        <div class="pet-card">
+            <div class="pet-photo">
+                ${pet.photo_url ? 
+                    `<img src="${pet.photo_url}" alt="${pet.name}" style="width:100%; height:100%; object-fit:cover;">` : 
+                    getPetEmoji(pet.species)
+                }
+                <span class="pet-status ${pet.is_lost ? 'status-lost' : 'status-safe'}">
+                    ${pet.is_lost ? '⚠️ Perdida' : '✓ Segura'}
+                </span>
+            </div>
+            <div class="pet-info">
+                <h3 class="pet-name">${pet.name}</h3>
+                <p class="pet-details">
+                    ${pet.species} ${pet.breed ? `• ${pet.breed}` : ''}<br>
+                    ${pet.sex} • ${pet.color}<br>
+                    ${pet.age_years ? `${pet.age_years} años` : ''} ${pet.age_months ? `${pet.age_months} meses` : ''}
+                </p>
+                <div class="pet-code">
+                    ${pet.pet_code}
                 </div>
-            `).join('');
-        }
+                
+                <!-- Contador de escaneos -->
+                <div id="scans-${pet.id}" style="background: linear-gradient(135deg, #e7f5ff, #cfe7ff); padding: 10px; border-radius: 8px; margin: 12px 0; text-align: center; font-size: 13px; color: #0c5460; border: 1px solid #bee5ff;">
+                    <span style="font-weight: 600;">📱 Cargando escaneos...</span>
+                </div>
+                
+                <div class="pet-actions">
+                    <button class="btn-action primary" onclick="showQR('${pet.pet_code}', '${pet.name}', '${pet.qr_code}')">
+                        Ver QR
+                    </button>
+                    <a href="/pet-detail?id=${pet.id}" class="btn-action primary" style="text-decoration: none;">
+                        Ver Detalle
+                    </a>
+                    <button class="btn-action" onclick="editPet(${pet.id})">
+                        Editar
+                    </button>
+                    ${pet.is_lost ? 
+                        `<button class="btn-action" onclick="markFound(${pet.id})">Encontrada</button>` :
+                        `<button class="btn-action" onclick="markLost(${pet.id})">Perdida</button>`
+                    }
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Cargar escaneos para cada mascota
+    pets.forEach(pet => loadPetScans(pet.id));
 
-        // Obtener emoji según especie
+// Cargar escaneos de una mascota específica
+async function loadPetScans(petId) {
+    try {
+        const response = await fetch(`/api/pets/${petId}/scans`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const scanElement = document.getElementById(`scans-${petId}`);
+            if (scanElement) {
+                const count = data.stats.total_scans || 0;
+                const lastScan = data.stats.last_scan;
+                
+                if (count === 0) {
+                    scanElement.innerHTML = '<span style="color: #6c757d; font-weight: 500;">📱 Sin escaneos aún</span>';
+                    scanElement.style.background = '#f8f9fa';
+                    scanElement.style.borderColor = '#dee2e6';
+                } else {
+                    const lastScanDate = lastScan ? new Date(lastScan) : null;
+                    const lastScanText = lastScanDate ? lastScanDate.toLocaleDateString('es-BO', { 
+                        day: '2-digit', 
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : '';
+                    
+                    scanElement.innerHTML = `
+                        <div style="font-size: 18px; font-weight: 700; color: #0c5460; margin-bottom: 2px;">
+                            📱 ${count}
+                        </div>
+                        <div style="font-size: 11px; color: #6c757d;">
+                            escaneo${count !== 1 ? 's' : ''} del QR
+                        </div>
+                        ${lastScanText ? `<div style="font-size: 10px; color: #6c757d; margin-top: 4px;">Último: ${lastScanText}</div>` : ''}
+                    `;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error cargando escaneos:', error);
+        const scanElement = document.getElementById(`scans-${petId}`);
+        if (scanElement) {
+            scanElement.innerHTML = '<span style="color: #6c757d;">-</span>';
+            scanElement.style.background = '#f8f9fa';
+        }
+    }
+}
+
+
+
+}    // Obtener emoji según especie
         function getPetEmoji(species) {
             const emojis = {
                 'Perro': '🐕',
@@ -662,12 +725,29 @@
             return `<span style="font-size: 4rem;">${emojis[species] || '🐾'}</span>`;
         }
 
-        // Actualizar estadísticas
-        function updateStats(pets) {
-            document.getElementById('totalPets').textContent = pets.length;
-            document.getElementById('totalAlerts').textContent = pets.filter(p => p.is_lost).length;
-            // TODO: Obtener total de escaneos del backend
+       // Actualizar estadísticas
+async function updateStats(pets) {
+    document.getElementById('totalPets').textContent = pets.length;
+    document.getElementById('totalAlerts').textContent = pets.filter(p => p.is_lost).length;
+    
+    // Obtener estadísticas totales del backend
+    try {
+        const response = await fetch('/api/users/stats', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('totalScans').textContent = data.stats.total_scans || 0;
         }
+    } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+        document.getElementById('totalScans').textContent = '0';
+    }
+}
 
         // Mostrar QR en modal
         function showQR(petCode, petName, qrCode) {

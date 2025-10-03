@@ -36,6 +36,68 @@ const upload = multer({
     }
 });
 
+
+// Obtener estadísticas de escaneos de una mascota
+exports.getPetScans = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        
+        // Verificar que la mascota pertenece al usuario
+        const pet = await getOne(
+            'SELECT id, name FROM pets WHERE id = ? AND user_id = ?',
+            [id, userId]
+        );
+        
+        if (!pet) {
+            return res.status(404).json({
+                success: false,
+                error: 'Mascota no encontrada'
+            });
+        }
+        
+        // Obtener estadísticas
+        const stats = await getOne(`
+            SELECT 
+                COUNT(*) as total_scans,
+                COUNT(DISTINCT DATE(scanned_at)) as unique_days,
+                MAX(scanned_at) as last_scan
+            FROM qr_scans
+            WHERE pet_id = ?
+        `, [id]);
+        
+        // Obtener últimos 10 escaneos
+        const recentScans = await getAll(`
+            SELECT 
+                scanned_at,
+                ip_address,
+                latitude,
+                longitude
+            FROM qr_scans
+            WHERE pet_id = ?
+            ORDER BY scanned_at DESC
+            LIMIT 10
+        `, [id]);
+        
+        res.json({
+            success: true,
+            stats: {
+                total_scans: stats.total_scans || 0,
+                unique_days: stats.unique_days || 0,
+                last_scan: stats.last_scan
+            },
+            recent_scans: recentScans
+        });
+        
+    } catch (error) {
+        console.error('Error obteniendo escaneos:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error al obtener estadísticas de escaneos'
+        });
+    }
+};
+
 // Exportar el middleware
 exports.uploadPhoto = upload.single('photo');
 
