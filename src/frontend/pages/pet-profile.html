@@ -731,625 +731,308 @@
     </div>
 </div>
 
-    <script>
-        let petData = null;
-        let currentLocation = null;
-        let petCode = null;
+<script>
+    let petData = null;
+    let currentLocation = null;
+    let petCode = null;
+    let selectedPhotos = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const pathParts = window.location.pathname.split('/');
-            petCode = pathParts[pathParts.length - 1];
-            
-            if (petCode) {
-                loadPetData(petCode);
-            } else {
-                showError('Código de mascota no válido');
-            }
-        });
-
-        async function loadPetData(code) {
-            try {
-                const response = await fetch(`/api/pets/public/${code}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    petData = data.pet;
-                    displayPetInfo(data.pet);
-                    registerScan();
-                } else {
-                    showError('Mascota no encontrada');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showError('Error cargando información');
-            }
-        }
-
-        function displayPetInfo(pet) {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-
-            // Status
-            const statusBadge = document.getElementById('statusBadge');
-            if (pet.is_lost) {
-                statusBadge.innerHTML = '<span>⚠️</span> MASCOTA PERDIDA';
-                statusBadge.className = 'status-badge status-lost';
-            } else {
-                statusBadge.innerHTML = '<span>✓</span> Mascota Segura';
-                statusBadge.className = 'status-badge status-safe';
-            }
-
-            // Photo
-            if (pet.photo_url) {
-                document.getElementById('petPhotoContainer').innerHTML = 
-                    `<img src="${pet.photo_url}" alt="${pet.name}">`;
-            } else {
-                const emoji = getEmoji(pet.species);
-                document.getElementById('petEmoji').textContent = emoji;
-            }
-
-            // Basic info
-            document.getElementById('petName').textContent = pet.name;
-            document.getElementById('petSpecies').textContent = pet.species || '-';
-            document.getElementById('petBreed').textContent = pet.breed || 'No especificada';
-            document.getElementById('petSex').textContent = pet.sex || '-';
-            document.getElementById('petColor').textContent = pet.color || '-';
-            
-            let age = '';
-            if (pet.age_years) age += `${pet.age_years} años`;
-            if (pet.age_months) {
-                if (age) age += ' y ';
-                age += `${pet.age_months} meses`;
-            }
-            document.getElementById('petAge').textContent = age || 'No especificada';
-
-            // Medical info
-            const hasEmergencyInfo = pet.allergies || pet.medications || pet.medical_conditions || pet.special_care;
-            if (hasEmergencyInfo) {
-                document.getElementById('emergencyInfo').style.display = 'block';
-                
-                if (pet.allergies) {
-                    document.getElementById('allergies').style.display = 'block';
-                    document.querySelector('#allergies span').textContent = pet.allergies;
-                }
-                if (pet.medications) {
-                    document.getElementById('medications').style.display = 'block';
-                    document.querySelector('#medications span').textContent = pet.medications;
-                }
-                if (pet.medical_conditions) {
-                    document.getElementById('conditions').style.display = 'block';
-                    document.querySelector('#conditions span').textContent = pet.medical_conditions;
-                }
-                if (pet.special_care) {
-                    document.getElementById('specialCare').style.display = 'block';
-                    document.querySelector('#specialCare span').textContent = pet.special_care;
-                }
-            }
-
-            // Owner info
-            if (pet.owner) {
-                document.getElementById('ownerName').textContent = pet.owner.name;
-                document.getElementById('ownerCity').textContent = 
-                    `${pet.owner.city}, ${pet.owner.department}`;
-                document.getElementById('ownerPhone').textContent = pet.owner.phone;
-
-                // Contact buttons
-                if (pet.owner.whatsapp) {
-                    const whatsappBtn = document.getElementById('whatsappBtn');
-                    const whatsappNumber = pet.owner.whatsapp.replace(/[^0-9]/g, '');
-                    whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=Hola! Encontré a ${pet.name}`;
-                } else {
-                    document.getElementById('whatsappBtn').style.display = 'none';
-                }
-
-                if (pet.owner.phone) {
-                    document.getElementById('phoneBtn').href = `tel:${pet.owner.phone}`;
-                }
-            }
-
-            // Vet info
-            if (pet.veterinarian_name && pet.veterinarian_phone) {
-                document.getElementById('vetInfo').style.display = 'block';
-                document.querySelector('#vetName span').textContent = pet.veterinarian_name;
-                document.querySelector('#vetPhone span').textContent = pet.veterinarian_phone;
-            }
-        }
-
-        function getEmoji(species) {
-            const emojis = {
-                'Perro': '🐕',
-                'Gato': '🐈',
-                'Conejo': '🐰',
-                'Ave': '🦜',
-                'Otro': '🐾'
-            };
-            return emojis[species] || '🐾';
-        }
-
-        async function registerScan() {
-            try {
-                await fetch(`/api/pets/scan/${petCode}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        latitude: currentLocation?.lat,
-                        longitude: currentLocation?.lng
-                    })
-                });
-            } catch (error) {
-                console.error('Error registering scan:', error);
-            }
-        }
-
-        async function shareLocation() {
-            const statusDiv = document.getElementById('locationStatus');
-            
-            if (!navigator.geolocation) {
-                statusDiv.textContent = 'Tu navegador no soporta geolocalización';
-                statusDiv.className = 'status-message status-error';
-                statusDiv.style.display = 'block';
-                return;
-            }
-
-            statusDiv.textContent = 'Obteniendo ubicación...';
-            statusDiv.className = 'status-message';
-            statusDiv.style.display = 'block';
-
-            try {
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0
-                    });
-                });
-
-                currentLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                const response = await fetch('/api/locations/report', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        petCode: petCode,
-                        latitude: currentLocation.lat,
-                        longitude: currentLocation.lng,
-                        accuracy: position.coords.accuracy
-                    })
-                });
-
-                if (response.ok) {
-                    statusDiv.textContent = '✓ Ubicación compartida exitosamente';
-                    statusDiv.className = 'status-message status-success';
-                }
-            } catch (error) {
-                statusDiv.textContent = 'No se pudo obtener la ubicación';
-                statusDiv.className = 'status-message status-error';
-            }
-        }
-
-        function showReportModal() {
-            document.getElementById('reportModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('reportModal').classList.remove('active');
-        }
-
-document.getElementById('reportForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Crear FormData para enviar archivos
-    const formData = new FormData();
-    formData.append('petCode', petCode);
-    formData.append('finderName', document.getElementById('finderName').value);
-    formData.append('finderPhone', document.getElementById('finderPhone').value);
-    formData.append('finderEmail', document.getElementById('finderEmail').value);
-    formData.append('message', document.getElementById('message').value);
-    
-    // Agregar ubicación si existe
-    if (currentLocation) {
-        formData.append('latitude', currentLocation.lat);
-        formData.append('longitude', currentLocation.lng);
-    }
-    
-    // Agregar foto si existe
-    const photoInput = document.getElementById('sightingPhoto');
-    if (photoInput.files[0]) {
-        formData.append('photo', photoInput.files[0]);
-    }
-
-    try {
-        const response = await fetch('/api/locations/report', {
-            method: 'POST',
-            body: formData // No enviar Content-Type, FormData lo maneja
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Mensaje enviado exitosamente. El propietario ha sido notificado.');
-            closeModal();
-            this.reset();
-            // Resetear preview
-            document.getElementById('sightingPhotoPreview').style.display = 'none';
-            document.getElementById('photoUploadArea').style.display = 'block';
-        } else {
-            alert('Error: ' + (result.error || 'No se pudo enviar el mensaje'));
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error enviando mensaje. Por favor intenta nuevamente.');
-    }
-});
-
-         function showError(message) {
-            document.getElementById('loadingState').innerHTML = `<p style="color: white; font-size: 16px;">${message}</p>
-                <p style="margin-top: 15px;"><a href="/dashboard" style="color: white; text-decoration: underline;">Volver al inicio</a></p>`;
-        }
-// Preview de foto del avistamiento
-function previewSightingPhoto(event) {
-    const file = event.target.files[0];
-    if (file) {
-        // Validar tamaño (5MB máximo)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('La foto es muy grande. Máximo 5MB');
-            event.target.value = '';
+    // Cargar información AL INICIO (SOLO UNA VEZ)
+    document.addEventListener('DOMContentLoaded', async function() {
+        const pathParts = window.location.pathname.split('/');
+        petCode = pathParts[pathParts.length - 1];
+        
+        if (!petCode) {
+            showError('Código de mascota no válido');
             return;
         }
         
-        // Validar tipo
-        if (!file.type.startsWith('image/')) {
-            alert('Solo se permiten imágenes');
-            event.target.value = '';
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('sightingPhotoPreview');
-            const uploadArea = document.getElementById('photoUploadArea');
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            uploadArea.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-// Manejar selección de fotos
-function handlePhotoSelection(event) {
-    const files = Array.from(event.target.files);
-    
-    // Limitar a 4 fotos
-    const availableSlots = 4 - selectedPhotos.length;
-    const filesToAdd = files.slice(0, availableSlots);
-    
-    if (files.length > availableSlots) {
-        alert(`Solo puedes subir ${availableSlots} foto(s) más. Máximo 4 fotos en total.`);
-    }
-    
-    // Agregar archivos seleccionados
-    selectedPhotos = selectedPhotos.concat(filesToAdd);
-    
-    // Mostrar preview
-    displayPhotoPreview();
-    
-    // Limpiar input para permitir seleccionar las mismas fotos nuevamente
-    event.target.value = '';
-}
-
-// Mostrar preview de fotos
-function displayPhotoPreview() {
-    const container = document.getElementById('photoPreviewContainer');
-    const grid = document.getElementById('photoPreviewGrid');
-    const countSpan = document.getElementById('photoCount');
-    
-    if (selectedPhotos.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
-    
-    container.style.display = 'block';
-    countSpan.textContent = selectedPhotos.length;
-    
-    grid.innerHTML = '';
-    
-    selectedPhotos.forEach((file, index) => {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const photoItem = document.createElement('div');
-            photoItem.className = 'photo-preview-item';
-            photoItem.innerHTML = `
-                <img src="${e.target.result}" alt="Foto ${index + 1}">
-                <button class="photo-remove-btn" onclick="removePhoto(${index})" type="button">
-                    ×
-                </button>
-            `;
-            grid.appendChild(photoItem);
-        };
-        
-        reader.readAsDataURL(file);
+        await loadPetData();
     });
-}
 
-// Eliminar foto
-function removePhoto(index) {
-    selectedPhotos.splice(index, 1);
-    displayPhotoPreview();
-}
+    // Función para cargar datos de la mascota
+    async function loadPetData() {
+        try {
+            const response = await fetch(`/api/pets/public/${petCode}`);
+            const data = await response.json();
 
-// Compartir ubicación con fotos
-async function shareLocationWithPhotos() {
-    const statusDiv = document.getElementById('locationStatus');
-    
-    if (!navigator.geolocation) {
-        statusDiv.textContent = 'Tu navegador no soporta geolocalización';
-        statusDiv.className = 'status-message status-error';
-        statusDiv.style.display = 'block';
-        return;
-    }
-    
-    if (selectedPhotos.length === 0) {
-        if (!confirm('No has seleccionado fotos. ¿Deseas compartir solo la ubicación?')) {
-            return;
+            if (data.success) {
+                petData = data.pet;
+                displayPetInfo(data.pet);
+                // NO llamar registerScan() aquí - ya se registra en el backend
+            } else {
+                showError('Mascota no encontrada');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Error cargando información');
         }
     }
 
-    statusDiv.textContent = 'Obteniendo ubicación y subiendo fotos...';
-    statusDiv.className = 'status-message';
-    statusDiv.style.display = 'block';
+    function displayPetInfo(pet) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
 
-    try {
-        // Obtener ubicación
-        const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            });
-        });
-
-        currentLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
-
-        // Crear FormData para enviar fotos
-        const formData = new FormData();
-        formData.append('petCode', petCode);
-        formData.append('latitude', currentLocation.lat);
-        formData.append('longitude', currentLocation.lng);
-        formData.append('accuracy', position.coords.accuracy);
-        
-        // Agregar fotos
-        selectedPhotos.forEach((photo, index) => {
-            formData.append('photos', photo);
-        });
-
-        // Enviar al servidor
-        const response = await fetch('/api/locations/report', {
-            method: 'POST',
-            body: formData // No incluir Content-Type, FormData lo maneja automáticamente
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-            statusDiv.textContent = `✓ Ubicación y ${selectedPhotos.length} foto(s) compartidas exitosamente`;
-            statusDiv.className = 'status-message status-success';
-            
-            // Limpiar fotos seleccionadas
-            selectedPhotos = [];
-            displayPhotoPreview();
-            
-            // Opcional: mostrar mensaje de agradecimiento
-            setTimeout(() => {
-                alert('¡Gracias por ayudar a reunir esta mascota con su familia!');
-            }, 1000);
+        // Status
+        const statusBadge = document.getElementById('statusBadge');
+        if (pet.is_lost) {
+            statusBadge.innerHTML = '<span>⚠️</span> MASCOTA PERDIDA';
+            statusBadge.className = 'status-badge status-lost';
         } else {
-            statusDiv.textContent = result.error || 'Error al compartir información';
+            statusBadge.innerHTML = '<span>✓</span> Mascota Segura';
+            statusBadge.className = 'status-badge status-safe';
+        }
+
+        // Photo
+        if (pet.photo_url) {
+            document.getElementById('petPhotoContainer').innerHTML = 
+                `<img src="${pet.photo_url}" alt="${pet.name}">`;
+        } else {
+            const emoji = getEmoji(pet.species);
+            document.getElementById('petEmoji').textContent = emoji;
+        }
+
+        // Basic info
+        document.getElementById('petName').textContent = pet.name;
+        document.getElementById('petSpecies').textContent = pet.species || '-';
+        document.getElementById('petBreed').textContent = pet.breed || 'No especificada';
+        document.getElementById('petSex').textContent = pet.sex || '-';
+        document.getElementById('petColor').textContent = pet.color || '-';
+        
+        let age = '';
+        if (pet.age_years) age += `${pet.age_years} años`;
+        if (pet.age_months) {
+            if (age) age += ' y ';
+            age += `${pet.age_months} meses`;
+        }
+        document.getElementById('petAge').textContent = age || 'No especificada';
+
+        // Medical info
+        const hasEmergencyInfo = pet.allergies || pet.medications || pet.medical_conditions || pet.special_care;
+        if (hasEmergencyInfo) {
+            document.getElementById('emergencyInfo').style.display = 'block';
+            
+            if (pet.allergies) {
+                document.getElementById('allergies').style.display = 'block';
+                document.querySelector('#allergies span').textContent = pet.allergies;
+            }
+            if (pet.medications) {
+                document.getElementById('medications').style.display = 'block';
+                document.querySelector('#medications span').textContent = pet.medications;
+            }
+            if (pet.medical_conditions) {
+                document.getElementById('conditions').style.display = 'block';
+                document.querySelector('#conditions span').textContent = pet.medical_conditions;
+            }
+            if (pet.special_care) {
+                document.getElementById('specialCare').style.display = 'block';
+                document.querySelector('#specialCare span').textContent = pet.special_care;
+            }
+        }
+
+        // Owner info
+        if (pet.owner) {
+            document.getElementById('ownerName').textContent = pet.owner.name;
+            document.getElementById('ownerCity').textContent = 
+                `${pet.owner.city}, ${pet.owner.department}`;
+            document.getElementById('ownerPhone').textContent = pet.owner.phone;
+
+            // Contact buttons
+            if (pet.owner.whatsapp) {
+                const whatsappBtn = document.getElementById('whatsappBtn');
+                const whatsappNumber = pet.owner.whatsapp.replace(/[^0-9]/g, '');
+                whatsappBtn.href = `https://wa.me/${whatsappNumber}?text=Hola! Encontré a ${pet.name}`;
+            } else {
+                document.getElementById('whatsappBtn').style.display = 'none';
+            }
+
+            if (pet.owner.phone) {
+                document.getElementById('phoneBtn').href = `tel:${pet.owner.phone}`;
+            }
+        }
+
+        // Vet info
+        if (pet.veterinarian_name && pet.veterinarian_phone) {
+            document.getElementById('vetInfo').style.display = 'block';
+            document.querySelector('#vetName span').textContent = pet.veterinarian_name;
+            document.querySelector('#vetPhone span').textContent = pet.veterinarian_phone;
+        }
+    }
+
+    function getEmoji(species) {
+        const emojis = {
+            'Perro': '🐕',
+            'Gato': '🐈',
+            'Conejo': '🐰',
+            'Ave': '🦜',
+            'Otro': '🐾'
+        };
+        return emojis[species] || '🐾';
+    }
+
+    // Preview de fotos de ubicación
+    function previewLocationPhotos(event) {
+        const files = Array.from(event.target.files);
+        
+        // Agregar nuevas fotos sin exceder el límite de 4
+        files.forEach(file => {
+            if (selectedPhotos.length < 4) {
+                selectedPhotos.push(file);
+            }
+        });
+        
+        updatePhotoPreview();
+        event.target.value = '';
+    }
+
+    // Actualizar vista previa de fotos
+    function updatePhotoPreview() {
+        const previewContainer = document.getElementById('photosPreview');
+        previewContainer.innerHTML = '';
+        
+        if (selectedPhotos.length > 0) {
+            previewContainer.style.display = 'grid';
+            
+            selectedPhotos.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid #dee2e6;';
+                    imgDiv.innerHTML = `
+                        <img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: 2px; right: 2px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1; font-weight: bold; display: flex; align-items: center; justify-content: center;">×</button>
+                    `;
+                    previewContainer.appendChild(imgDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            const counter = document.createElement('p');
+            counter.style.cssText = 'grid-column: 1/-1; text-align: center; margin: 10px 0 0 0; font-size: 14px; color: #6c757d;';
+            counter.textContent = `${selectedPhotos.length}/4 fotos seleccionadas`;
+            previewContainer.appendChild(counter);
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    }
+
+    // Eliminar foto
+    function removePhoto(index) {
+        selectedPhotos.splice(index, 1);
+        updatePhotoPreview();
+    }
+
+    // Compartir ubicación y fotos
+    async function shareLocationAndPhotos() {
+        const statusDiv = document.getElementById('locationStatus');
+        
+        if (!navigator.geolocation) {
+            statusDiv.textContent = 'Tu navegador no soporta geolocalización';
+            statusDiv.className = 'status-message status-error';
+            statusDiv.style.display = 'block';
+            return;
+        }
+
+        statusDiv.textContent = 'Obteniendo ubicación y subiendo fotos...';
+        statusDiv.className = 'status-message';
+        statusDiv.style.display = 'block';
+
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                });
+            });
+
+            const formData = new FormData();
+            formData.append('petCode', petCode);
+            formData.append('latitude', position.coords.latitude);
+            formData.append('longitude', position.coords.longitude);
+            formData.append('accuracy', position.coords.accuracy);
+            
+            selectedPhotos.forEach((photo) => {
+                formData.append('photos', photo);
+            });
+
+            const response = await fetch('/api/locations/report', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                statusDiv.textContent = `✓ Ubicación compartida exitosamente${selectedPhotos.length > 0 ? ` con ${selectedPhotos.length} foto(s)` : ''}. ¡El dueño será notificado!`;
+                statusDiv.className = 'status-message status-success';
+                
+                selectedPhotos = [];
+                updatePhotoPreview();
+            } else {
+                throw new Error(result.error || 'Error al enviar');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            statusDiv.textContent = 'No se pudo compartir la ubicación. Intenta nuevamente.';
             statusDiv.className = 'status-message status-error';
         }
-    } catch (error) {
-        console.error('Error:', error);
-        statusDiv.textContent = 'No se pudo obtener la ubicación o subir las fotos';
-        statusDiv.className = 'status-message status-error';
     }
-}
 
-// Variables para las fotos
-let selectedPhotos = [];
+    // Modal
+    function showReportModal() {
+        document.getElementById('reportModal').classList.add('active');
+    }
 
-// Preview de fotos de ubicación
-function previewLocationPhotos(event) {
-    const files = Array.from(event.target.files);
-    
-    // Agregar nuevas fotos sin exceder el límite de 4
-    files.forEach(file => {
-        if (selectedPhotos.length < 4) {
-            selectedPhotos.push(file);
+    function closeModal() {
+        document.getElementById('reportModal').classList.remove('active');
+    }
+
+    // Form submit
+    document.getElementById('reportForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('petCode', petCode);
+        formData.append('finderName', document.getElementById('finderName').value);
+        formData.append('finderPhone', document.getElementById('finderPhone').value);
+        formData.append('finderEmail', document.getElementById('finderEmail').value);
+        formData.append('message', document.getElementById('message').value);
+        
+        if (currentLocation) {
+            formData.append('latitude', currentLocation.lat);
+            formData.append('longitude', currentLocation.lng);
+        }
+
+        try {
+            const response = await fetch('/api/locations/report', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Mensaje enviado exitosamente. El propietario ha sido notificado.');
+                closeModal();
+                this.reset();
+            } else {
+                alert('Error: ' + (result.error || 'No se pudo enviar el mensaje'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error enviando mensaje. Por favor intenta nuevamente.');
         }
     });
-    
-    updatePhotoPreview();
-    
-    // Limpiar el input para permitir seleccionar el mismo archivo nuevamente si se elimina
-    event.target.value = '';
-}
 
-// Actualizar vista previa de fotos
-function updatePhotoPreview() {
-    const previewContainer = document.getElementById('photosPreview');
-    previewContainer.innerHTML = '';
-    
-    if (selectedPhotos.length > 0) {
-        previewContainer.style.display = 'grid';
-        
-        selectedPhotos.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgDiv = document.createElement('div');
-                imgDiv.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid #dee2e6;';
-                imgDiv.innerHTML = `
-                    <img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">
-                    <button type="button" onclick="removePhoto(${index})" style="position: absolute; top: 2px; right: 2px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1; font-weight: bold; display: flex; align-items: center; justify-content: center;">×</button>
-                `;
-                previewContainer.appendChild(imgDiv);
-            };
-            reader.readAsDataURL(file);
-        });
-        
-        // Mostrar contador
-        const counter = document.createElement('p');
-        counter.style.cssText = 'grid-column: 1/-1; text-align: center; margin: 10px 0 0 0; font-size: 14px; color: #6c757d;';
-        counter.textContent = `${selectedPhotos.length}/4 fotos seleccionadas`;
-        previewContainer.appendChild(counter);
-    } else {
-        previewContainer.style.display = 'none';
+    function showError(message) {
+        document.getElementById('loadingState').innerHTML = `
+            <p style="color: white; font-size: 16px;">${message}</p>
+            <p style="margin-top: 15px;">
+                <a href="/" style="color: white; text-decoration: underline;">Volver al inicio</a>
+            </p>
+        `;
     }
-}
-
-// Eliminar foto
-function removePhoto(index) {
-    selectedPhotos.splice(index, 1);
-    updatePhotoPreview();
-}
-
-// Compartir ubicación y fotos
-async function shareLocationAndPhotos() {
-    const statusDiv = document.getElementById('locationStatus');
-    
-    if (!navigator.geolocation) {
-        statusDiv.textContent = 'Tu navegador no soporta geolocalización';
-        statusDiv.className = 'status-message status-error';
-        statusDiv.style.display = 'block';
-        return;
-    }
-
-    statusDiv.textContent = 'Obteniendo ubicación y subiendo fotos...';
-    statusDiv.className = 'status-message';
-    statusDiv.style.display = 'block';
-
-    try {
-        const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            });
-        });
-
-        const formData = new FormData();
-        formData.append('petCode', petCode);
-        formData.append('latitude', position.coords.latitude);
-        formData.append('longitude', position.coords.longitude);
-        formData.append('accuracy', position.coords.accuracy);
-        
-        // Agregar fotos si hay
-        selectedPhotos.forEach((photo) => {
-            formData.append('photos', photo);
-        });
-
-        const response = await fetch('/api/locations/report', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-            statusDiv.textContent = `✓ Ubicación compartida exitosamente${selectedPhotos.length > 0 ? ` con ${selectedPhotos.length} foto(s)` : ''}. ¡El dueño será notificado!`;
-            statusDiv.className = 'status-message status-success';
-            
-            // Limpiar fotos
-            selectedPhotos = [];
-            updatePhotoPreview();
-        } else {
-            throw new Error(result.error || 'Error al enviar');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        statusDiv.textContent = 'No se pudo compartir la ubicación. Intenta nuevamente.';
-        statusDiv.className = 'status-message status-error';
-    }
-}
-
-// Eliminar foto
-function removePhoto(index) {
-    selectedPhotos.splice(index, 1);
-    const input = document.getElementById('locationPhotos');
-    const dt = new DataTransfer();
-    selectedPhotos.forEach(file => dt.items.add(file));
-    input.files = dt.files;
-    previewLocationPhotos({ target: input });
-}
-
-// Compartir ubicación y fotos
-async function shareLocationAndPhotos() {
-    const statusDiv = document.getElementById('locationStatus');
-    
-    if (!navigator.geolocation) {
-        statusDiv.textContent = 'Tu navegador no soporta geolocalización';
-        statusDiv.className = 'status-message status-error';
-        statusDiv.style.display = 'block';
-        return;
-    }
-
-    statusDiv.textContent = 'Obteniendo ubicación y subiendo fotos...';
-    statusDiv.className = 'status-message';
-    statusDiv.style.display = 'block';
-
-    try {
-        const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            });
-        });
-
-        const formData = new FormData();
-        formData.append('petCode', petCode);
-        formData.append('latitude', position.coords.latitude);
-        formData.append('longitude', position.coords.longitude);
-        formData.append('accuracy', position.coords.accuracy);
-        
-        // Agregar fotos si hay
-        selectedPhotos.forEach((photo, index) => {
-            formData.append('photos', photo);
-        });
-
-        const response = await fetch('/api/locations/report', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            statusDiv.textContent = `✓ Ubicación compartida exitosamente${selectedPhotos.length > 0 ? ` con ${selectedPhotos.length} foto(s)` : ''}`;
-            statusDiv.className = 'status-message status-success';
-            
-            // Limpiar fotos
-            selectedPhotos = [];
-            document.getElementById('locationPhotos').value = '';
-            document.getElementById('photosPreview').style.display = 'none';
-        } else {
-            throw new Error('Error al enviar');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        statusDiv.textContent = 'No se pudo compartir la ubicación';
-        statusDiv.className = 'status-message status-error';
-    }
-}
-
-    </script>
+</script>
 </body>
 </html>
